@@ -1,0 +1,161 @@
+<?php
+
+namespace App\Controller\Api;
+
+use App\Entity\Auth\Token;
+use App\Entity\User\User;
+use App\Form\Auth\RegisterType;
+use App\Repository\Auth\TokenRepository;
+use App\Repository\User\UserRepository;
+use App\Util\ResponseBody;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+/**
+ * @Route("/auth", name="auth_")
+ */
+class AuthController extends AbstractFOSRestController
+{
+    /** @var EntityManagerInterface */
+    private $entityManager;
+
+    /** @var ResponseBody */
+    private $responseBody;
+
+    /** @var ValidatorInterface */
+    private $validator;
+
+    /** @var UserPasswordEncoderInterface */
+    private $passwordEncoder;
+
+    /** @var UserRepository */
+    private $userRepository;
+
+    /** @var TokenRepository */
+    private $tokenRepository;
+
+    /** @var JWTTokenManagerInterface */
+    private $authenticator;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ResponseBody $responseBody,
+        ValidatorInterface $validator,
+        UserPasswordEncoderInterface $passwordEncoder,
+        UserRepository $userRepository,
+        TokenRepository $tokenRepository,
+        JWTTokenManagerInterface $authenticator
+    ) {
+        $this->entityManager = $entityManager;
+        $this->responseBody = $responseBody;
+        $this->validator = $validator;
+        $this->passwordEncoder = $passwordEncoder;
+        $this->userRepository = $userRepository;
+        $this->tokenRepository = $tokenRepository;
+        $this->authenticator = $authenticator;
+    }
+
+    /**
+     * @Rest\Post(path="/register", name="register")
+     * @Rest\View
+     */
+    public function registerAction(Request $request)
+    {
+        $user = new User();
+
+        $data = json_decode($request->getContent(), true);
+
+        $form = $this->createForm(RegisterType::class, $user);
+
+        try {
+            $form->submit($data);
+        } catch (\Exception $exception) {
+            return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], $exception->getMessage());
+        }
+
+        $errors = $this->validator->validate($user, null, ['User:Register']);
+
+        if (count($errors) > 0) {
+            return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], ResponseBody::getValidatorErrors($errors));
+        }
+
+        $password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
+        $user->setPassword($password);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $this->responseBody->create(Response::HTTP_CREATED, $user, []);
+    }
+
+    /**
+     * @Rest\Post(path="/authentication", name="authentication")
+     * @Rest\View
+     */
+    public function authenticationAction(Request $request)
+    {
+        $user = new User();
+
+        $data = json_decode($request->getContent(), true);
+
+        $form = $this->createForm(RegisterType::class, $user);
+
+        try {
+            $form->submit($data);
+        } catch (\Exception $exception) {
+            return $this->json($exception->getMessage(), 404);
+        }
+
+        $errors = $this->validator->validate($user, null, ['User:Authentication']);
+
+        if (count($errors) > 0) {
+            return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], ResponseBody::getValidatorErrors($errors));
+        }
+
+        $registeredUser = $this->userRepository->findOneBy(['email' => $user->getEmail()]);
+
+        if (!($registeredUser instanceof User)) {
+            return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], sprintf(ResponseBody::USER_NOT_FOUND, $user->getEmail()));
+        }
+
+        if ($this->passwordEncoder->isPasswordValid($registeredUser, $user->getPassword())) {
+            $token = $this->authenticator->create($registeredUser);
+            $this->getAuthToken($token, $registeredUser);
+            dump($token);
+            return $this->responseBody->create(Response::HTTP_ACCEPTED, ['token' => sprintf('Bearer %s', $token)], []);
+        }
+
+        return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], ResponseBody::WRONG_PASSWORD);
+    }
+
+    private function getAuthToken(string $token, User $user)
+    {
+        $preAuthToken = new PreAuthenticationJWTUserToken($token);
+        $options = $this->authenticator->decode($preAuthToken);
+
+        $authToken = $this->tokenRepository->findOneBy(['userId' => $user->getId()]);
+
+        $date = new DateTime();
+        if (!($authToken instanceof Token)) {
+            $authToken = new Token();
+        }
+
+        dump($token);
+        $authToken->update($user->getId(), $token, $date->setTimestamp($options['iat']), $date->setTimestamp($options['exp']));
+        $this->entityManager->persist($authToken);
+        $this->entityManager->flush();
+    }
+}
