@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -50,6 +51,9 @@ class AuthController extends AbstractFOSRestController
     /** @var JWTTokenManagerInterface */
     private $authenticator;
 
+    /** @var EncoderFactoryInterface */
+    private $encoderFactory;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         ResponseBody $responseBody,
@@ -57,7 +61,8 @@ class AuthController extends AbstractFOSRestController
         UserPasswordEncoderInterface $passwordEncoder,
         UserRepository $userRepository,
         TokenRepository $tokenRepository,
-        JWTTokenManagerInterface $authenticator
+        JWTTokenManagerInterface $authenticator,
+        EncoderFactoryInterface $encoderFactory
     ) {
         $this->entityManager = $entityManager;
         $this->responseBody = $responseBody;
@@ -66,6 +71,7 @@ class AuthController extends AbstractFOSRestController
         $this->userRepository = $userRepository;
         $this->tokenRepository = $tokenRepository;
         $this->authenticator = $authenticator;
+        $this->encoderFactory = $encoderFactory;
     }
 
     /**
@@ -134,7 +140,6 @@ class AuthController extends AbstractFOSRestController
         if ($this->passwordEncoder->isPasswordValid($registeredUser, $user->getPassword())) {
             $token = $this->authenticator->create($registeredUser);
             $this->getAuthToken($token, $registeredUser);
-            dump($token);
             return $this->responseBody->create(Response::HTTP_ACCEPTED, ['token' => sprintf('Bearer %s', $token)], []);
         }
 
@@ -153,8 +158,7 @@ class AuthController extends AbstractFOSRestController
             $authToken = new Token();
         }
 
-        dump($token);
-        $authToken->update($user->getId(), $token, $date->setTimestamp($options['iat']), $date->setTimestamp($options['exp']));
+        $authToken->update($user->getId(), password_hash($token, PASSWORD_DEFAULT), $date->setTimestamp($options['exp']));
         $this->entityManager->persist($authToken);
         $this->entityManager->flush();
     }

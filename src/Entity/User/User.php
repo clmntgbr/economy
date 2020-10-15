@@ -3,6 +3,7 @@
 namespace App\Entity\User;
 
 use App\Repository\User\UserRepository;
+use App\Traits\DoctrineEventsTrait;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -18,6 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    use DoctrineEventsTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

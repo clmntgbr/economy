@@ -3,6 +3,7 @@
 namespace App\Entity\Auth;
 
 use App\Repository\Auth\TokenRepository;
+use App\Traits\DoctrineEventsTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -10,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Token
 {
+    use DoctrineEventsTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -32,16 +35,10 @@ class Token
      */
     private $expireAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    public function update(string $userId, string $jwtHash, \DateTime $createdAt, \DateTime $expireAt)
+    public function update(string $userId, string $jwtHash, \DateTime $expireAt)
     {
         $this->userId = $userId;
         $this->jwtHash = $jwtHash;
-        $this->createdAt = $createdAt;
         $this->expireAt = $expireAt;
     }
 

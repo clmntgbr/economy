@@ -3,6 +3,7 @@
 namespace App\Util;
 
 use JMS\Serializer\SerializerInterface;
+use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -22,17 +23,17 @@ class ResponseBody
 
     private function template(int $code, $data, $errors)
     {
-        return $this->serializer->serialize([
+        return [
             'status' => $code,
             'data' => $data,
             'errorsCount' => count($errors),
             'errors' => $errors,
-        ], 'json');
+        ];
     }
 
     public function create(int $code, $data, $errors)
     {
-        return new JsonResponse($this->template($code, $data, $errors), $code, [], true);
+        return View::create($this->template($code, $data, $errors), $code, []);
     }
 
     static function getValidatorErrors(ConstraintViolationListInterface $violationList)

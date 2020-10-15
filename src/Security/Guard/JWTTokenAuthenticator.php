@@ -29,6 +29,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\ChainUserProvider;
@@ -65,16 +68,17 @@ class JWTTokenAuthenticator extends \Lexik\Bundle\JWTAuthenticationBundle\Securi
         TokenExtractorInterface $tokenExtractor,
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-        TokenRepository $tokenRepository
+        TokenRepository $tokenRepository,
+        EncoderFactoryInterface $encoderFactory
     ) {
-
-        $this->jwtManager                    = $jwtManager;
-        $this->dispatcher                    = $dispatcher;
-        $this->tokenExtractor                = $tokenExtractor;
+        $this->jwtManager = $jwtManager;
+        $this->dispatcher = $dispatcher;
+        $this->tokenExtractor = $tokenExtractor;
         $this->preAuthenticationTokenStorage = new TokenStorage();
-        $this->entityManager                 = $entityManager;
+        $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->tokenRepository = $tokenRepository;
+        $this->encoderFactory = $encoderFactory;
     }
 
     public function supports(Request $request)
@@ -132,9 +136,11 @@ class JWTTokenAuthenticator extends \Lexik\Bundle\JWTAuthenticationBundle\Securi
             throw new InvalidTokenException('Invalid JWT Token');
         }
 
-        //TODO check if the token is still available
+        if (password_verify($jsonWebToken , $token->getJwtHash())) {
+            return $preAuthToken;
+        }
 
-        return $preAuthToken;
+        throw new InvalidTokenException('Invalid JWT Token');
     }
 
     /**
