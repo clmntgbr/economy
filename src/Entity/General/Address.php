@@ -80,6 +80,35 @@ class Address
      */
     private $latitude;
 
+    public function __construct(string $postalCode, $longitude, $latitude, string $street, string $city, string $country)
+    {
+        $this->postalCode = $postalCode;
+        $this->updateLongitude($longitude);
+        $this->updateLatitude($latitude);
+        $this->street = $street;
+        $this->vicinity = sprintf('%s, %s %s', $street, $city, $postalCode);
+        $this->city = $city;
+        $this->country = $country;
+    }
+
+    public function updateLongitude($longitude): self
+    {
+        if ($longitude) {
+            $this->longitude = $longitude/100000;
+        }
+
+        return $this;
+    }
+
+    public function updateLatitude($latitude): self
+    {
+        if ($latitude) {
+            $this->latitude = $latitude/100000;
+        }
+
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

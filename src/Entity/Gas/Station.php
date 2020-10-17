@@ -6,6 +6,7 @@ use App\Entity\General\Address;
 use App\Entity\Google\Place;
 use App\Repository\Gas\StationRepository;
 use App\Traits\DoctrineEventsTrait;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,7 +21,7 @@ class Station
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(type="integer")
      */
     private $id;
@@ -77,7 +78,7 @@ class Station
     private $prices;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Gas\Service", mappedBy="stations", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Gas\Service", mappedBy="stations", cascade={"persist"}, fetch="EXTRA_LAZY")
      */
     private $services;
 
@@ -89,10 +90,28 @@ class Station
      */
     private $googlePlace;
 
-    public function __construct()
+    public function __construct(string $id, string $pop, string $postalCode, string $longitude, string $latitude, string $street, string $city, string $country, array $element)
     {
+        $this->id = $id;
+        $this->pop = $pop;
+        $this->element = $element;
+        $this->address = new Address($postalCode, $longitude, $latitude, $street, $city, $country);
+
+        $this->isClosedOrNot();
+
         $this->prices = new ArrayCollection();
         $this->services = new ArrayCollection();
+    }
+
+    public function isClosedOrNot()
+    {
+        $this->isClosed = false;
+        $this->closedAt = null;
+
+        if (isset($this->element['fermeture']['attributes']['type']) && "D" == $this->element['fermeture']['attributes']['type']) {
+            $this->closedAt = DateTime::createFromFormat('Y-m-d H:i:s', str_replace("T", " ", substr($this->element['fermeture']['attributes']['debut'], 0, 19)));
+            $this->isClosed = true;
+        }
     }
 
     public function getId(): ?int

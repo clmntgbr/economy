@@ -1,0 +1,18 @@
+framework:
+    messenger:
+        transports:
+            async_priority_high:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: high
+
+            async_priority_low:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: low
+
+        routing:
+            'App\Message\Gas\CreateGasStation': async_priority_high
+            'App\Message\Gas\CreateGasType': async_priority_high
+            'App\Message\Gas\CreateGasService': async_priority_low
+            'App\Message\Gas\CreateGasPrice': async_priority_low
