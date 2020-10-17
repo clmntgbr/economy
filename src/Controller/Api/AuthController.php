@@ -11,17 +11,13 @@ use App\Util\ResponseBody;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -89,7 +85,7 @@ class AuthController extends AbstractFOSRestController
         try {
             $form->submit($data);
         } catch (\Exception $exception) {
-            return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], $exception->getMessage());
+            return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], ResponseBody::getErrorsFormatted('notknown', $exception->getMessage()));
         }
 
         $errors = $this->validator->validate($user, null, ['User:Register']);
@@ -134,7 +130,7 @@ class AuthController extends AbstractFOSRestController
         $registeredUser = $this->userRepository->findOneBy(['email' => $user->getEmail()]);
 
         if (!($registeredUser instanceof User)) {
-            return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], sprintf(ResponseBody::USER_NOT_FOUND, $user->getEmail()));
+            return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], ResponseBody::getErrorsFormatted('email', sprintf(ResponseBody::USER_NOT_FOUND, $user->getEmail())));
         }
 
         if ($this->passwordEncoder->isPasswordValid($registeredUser, $user->getPassword())) {
@@ -143,7 +139,7 @@ class AuthController extends AbstractFOSRestController
             return $this->responseBody->create(Response::HTTP_ACCEPTED, ['token' => sprintf('Bearer %s', $token)], []);
         }
 
-        return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], ResponseBody::WRONG_PASSWORD);
+        return $this->responseBody->create(Response::HTTP_BAD_REQUEST, [], ResponseBody::getErrorsFormatted('password', ResponseBody::WRONG_PASSWORD));
     }
 
     private function getAuthToken(string $token, User $user)
@@ -159,6 +155,7 @@ class AuthController extends AbstractFOSRestController
         }
 
         $authToken->update($user->getId(), password_hash($token, PASSWORD_DEFAULT), $date->setTimestamp($options['exp']));
+
         $this->entityManager->persist($authToken);
         $this->entityManager->flush();
     }

@@ -2,10 +2,8 @@
 
 namespace App\Util;
 
-use JMS\Serializer\SerializerInterface;
 use FOS\RestBundle\View\View;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Validator\ConstraintValidatorInterface;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ResponseBody
@@ -45,5 +43,10 @@ class ResponseBody
         }
 
         return $errors;
+    }
+
+    static function getErrorsFormatted(string $property, string $message)
+    {
+        return [['property' => $property, 'message' => $message]];
     }
 }

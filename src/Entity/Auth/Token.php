@@ -7,6 +7,7 @@ use App\Traits\DoctrineEventsTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ORM\Table(name="auth_token")
  * @ORM\Entity(repositoryClass=TokenRepository::class)
  */
 class Token
