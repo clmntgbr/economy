@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Gas;
 
 use App\Entity\Gas\Station;
 use App\Exceptions\GasPriceCommandException;
