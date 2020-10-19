@@ -32,7 +32,6 @@ services:
 
     app.listener.gas.station:
         class: App\Listener\Gas\StationListener
-        arguments: ['@doctrine.orm.entity_manager']
         tags:
             - { name: doctrine.event_listener, event: postLoad,  method: postLoad }
 

@@ -92,6 +92,8 @@ class GasPriceCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $max = 100;
+        $i = 0;
         $this->stations = $this->stationRepository->findGasStationById();
         $this->types = $this->typeRepository->findGasTypeById();
         $this->services = $this->serviceRepository->findGasServiceByName();
@@ -113,6 +115,12 @@ class GasPriceCommand extends Command
             $this->createGasPrices($element, $stationId);
 
             $progressBar->advance();
+
+            $i++;
+
+            if ($max == $i) {
+                break(1);
+            }
         }
 
         FileSystem::delete($xmlPath);

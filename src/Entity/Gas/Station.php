@@ -125,7 +125,7 @@ class Station
     /**
      * @var array
      *
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="array")
      *
      * @Serializer\Expose()
      * @Serializer\SerializedName("prices")
@@ -142,10 +142,8 @@ class Station
 
         $this->isClosedOrNot();
 
-        $this->lastPrices = [];
         $this->prices = new ArrayCollection();
         $this->services = new ArrayCollection();
-        $this->lastPrices = new ArrayCollection();
     }
 
     public function isClosedOrNot()

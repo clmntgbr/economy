@@ -13,7 +13,7 @@ class DefaultController extends AbstractController
      */
     public function index(StationRepository $stationRepository)
     {
-        $station = $stationRepository->findOneBy(['id' => 1000009]);
+        $station = $stationRepository->findOneBy(['id' => 2000002]);
 
         $station->getPrices();
         die;

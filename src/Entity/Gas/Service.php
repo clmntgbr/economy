@@ -39,7 +39,7 @@ class Service
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Gas\Station", inversedBy="services")
-     * @ORM\JoinTable(name="gas_station_service")
+     * @ORM\JoinTable(name="gas_station_services")
      */
     private $stations;
 
