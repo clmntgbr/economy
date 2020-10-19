@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Controller\Api\Gas;
 
+use App\Entity\Gas\Station;
 use App\Util\ResponseBody;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 /**
  * @Route("/api", name="api_")
  */
-class UserController extends AbstractFOSRestController
+class GasStationController extends AbstractFOSRestController
 {
     /** @var EntityManagerInterface */
     private $entityManager;
@@ -29,11 +31,12 @@ class UserController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get(path="/user", name="user")
+     * @Rest\Get(path="/gas/station/{id}", name="gas_station_id")
+     * @ParamConverter("station", class="App\Entity\Gas\Station", options={"mapping": {"id": "id"}})
      * @Rest\View
      */
-    public function getUserAction(Request $request, Security $security)
+    public function getGasStationById(Request $request, Station $station)
     {
-        return $this->responseBody->create(Response::HTTP_OK, $security->getUser(), []);
+        return $this->responseBody->create(Response::HTTP_OK, [$station], []);
     }
 }

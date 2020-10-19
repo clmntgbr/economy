@@ -97,9 +97,6 @@ class GasPriceCommand extends Command
         $this->services = $this->serviceRepository->findGasServiceByName();
         $this->prices = $this->priceRepository->findMaxDatePricesGroupByStationAndType();
 
-//        dump($this->stations, $this->types, $this->services, $this->prices);
-//        die;
-
         $xmlPath = $this->download();
 
         $elements = simplexml_load_file($xmlPath);
@@ -123,6 +120,71 @@ class GasPriceCommand extends Command
         $progressBar->finish();
 
         return Command::SUCCESS;
+    }
+
+    private function createGasStation(SimpleXMLElement $element, string $stationId): void
+    {
+        $this->messageBus->dispatch(new CreateGasStation(
+            $stationId,
+            (string)$element->attributes()->pop,
+            (string)$element->attributes()->cp,
+            (string)$element->attributes()->longitude,
+            (string)$element->attributes()->latitude,
+            (string)$element->adresse,
+            (string)$element->ville,
+            "FRANCE",
+            json_decode(str_replace("@", "", json_encode($element)), true)
+        ));
+
+        $this->createGasServices($stationId, $element);
+
+        $this->prices[$stationId] = [];
+        $this->stations[$stationId] = ["id" => $stationId];
+    }
+
+    private function createGasServices(string $stationId, SimpleXMLElement $element): void
+    {
+        foreach ((array)$element->services->service as $item) {
+//            $this->messageBus->dispatch(new CreateGasService($stationId, $item));
+            if (!isset($this->services[$item])) {
+                $this->services[$item] = $item;
+            }
+        }
+    }
+
+    private function createGasPrices(SimpleXMLElement $element, string $stationId): void
+    {
+        foreach ($element->prix as $item) {
+            $typeId = (string)$item->attributes()->id;
+
+            if (null === $typeId || "" === $typeId) {
+                continue;
+            }
+
+            if (!isset($this->types[$typeId])) {
+                $this->createGasTypes($item);
+            }
+
+            $typeId = $this->types[$typeId]['id'];
+
+            $date = (string)$item->attributes()->maj;
+
+            $date = str_replace("T", " ", substr($date, 0, 19));
+
+            if (null === $date || "" === $date) {
+                continue;
+            }
+
+            if ((false === isset($this->prices[$stationId][$typeId])) || ($date > $this->prices[$stationId][$typeId])) {
+                $this->messageBus->dispatch(new CreateGasPrice($typeId, $stationId, $date, (string)$item->attributes()->valeur));
+            }
+        }
+    }
+
+    private function createGasTypes(SimpleXMLElement $element): void
+    {
+        $this->messageBus->dispatch(new CreateGasType((string)$element->attributes()->id, (string)$element->attributes()->nom));
+        $this->types[(string)$element->attributes()->id] = ['id' => (string)$element->attributes()->id];
     }
 
     /**
@@ -150,70 +212,5 @@ class GasPriceCommand extends Command
         }
 
         return $xmlPath;
-    }
-
-    private function createGasStation(SimpleXMLElement $element, string $stationId)
-    {
-        $this->messageBus->dispatch(new CreateGasStation(
-            $stationId,
-            (string)$element->attributes()->pop,
-            (string)$element->attributes()->cp,
-            (string)$element->attributes()->longitude,
-            (string)$element->attributes()->latitude,
-            (string)$element->adresse,
-            (string)$element->ville,
-            "FRANCE",
-            json_decode(str_replace("@", "", json_encode($element)), true)
-        ));
-
-        $this->createGasService($stationId, $element);
-
-        $this->prices[$stationId] = [];
-        $this->stations[$stationId] = ["id" => $stationId];
-    }
-
-    private function createGasService(string $stationId, SimpleXMLElement $element)
-    {
-        foreach ((array)$element->services->service as $item) {
-//            $this->messageBus->dispatch(new CreateGasService($stationId, $item));
-            if (!isset($this->services[$item])) {
-                $this->services[$item] = $item;
-            }
-        }
-    }
-
-    private function createGasPrices(SimpleXMLElement $element, string $stationId)
-    {
-        foreach ($element->prix as $item) {
-            $typeId = (string)$item->attributes()->id;
-
-            if (null === $typeId || "" === $typeId) {
-                continue;
-            }
-
-            if (!isset($this->types[$typeId])) {
-                $this->createGasType($item);
-            }
-
-            $typeId = $this->types[$typeId]['id'];
-
-            $date = (string)$item->attributes()->maj;
-
-            $date = str_replace("T", " ", substr($date, 0, 19));
-
-            if (null === $date || "" === $date) {
-                continue;
-            }
-
-            if ((false === isset($this->prices[$stationId][$typeId])) || ($date > $this->prices[$stationId][$typeId])) {
-                $this->messageBus->dispatch(new CreateGasPrice($typeId, $stationId, $date, (string)$item->attributes()->valeur));
-            }
-        }
-    }
-
-    private function createGasType(SimpleXMLElement $element)
-    {
-        $this->messageBus->dispatch(new CreateGasType((string)$element->attributes()->id, (string)$element->attributes()->nom));
-        $this->types[(string)$element->attributes()->id] = ['id' => (string)$element->attributes()->id];
     }
 }

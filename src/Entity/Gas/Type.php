@@ -8,10 +8,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="gas_type")
  * @ORM\Entity(repositoryClass=TypeRepository::class)
+ *
+ * @Serializer\ExclusionPolicy(policy="all")
  */
 class Type
 {
@@ -21,6 +24,8 @@ class Type
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose()
      */
     private $id;
 
@@ -28,6 +33,8 @@ class Type
      * @var string
      *
      * @ORM\Column(type="string")
+     *
+     * @Serializer\Expose()
      */
     private $name;
 
@@ -36,6 +43,8 @@ class Type
      *
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(length=128, unique=true)
+     *
+     * @Serializer\Expose()
      */
     private $slug;
 

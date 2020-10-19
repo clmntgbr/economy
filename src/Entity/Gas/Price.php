@@ -6,10 +6,13 @@ use App\Repository\Gas\PriceRepository;
 use App\Traits\DoctrineEventsTrait;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="gas_price")
  * @ORM\Entity(repositoryClass=PriceRepository::class)
+ *
+ * @Serializer\ExclusionPolicy(policy="all")
  */
 class Price
 {
@@ -19,6 +22,8 @@ class Price
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose()
      */
     private $id;
 
@@ -26,6 +31,8 @@ class Price
      * @var Type
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Gas\Type", inversedBy="prices", fetch="EXTRA_LAZY", cascade={"persist"})
+     *
+     * @Serializer\Expose()
      */
     public $type;
 
@@ -40,6 +47,8 @@ class Price
      * @var float
      *
      * @ORM\Column(type="float")
+     *
+     * @Serializer\Expose()
      */
     private $value;
 
@@ -47,6 +56,9 @@ class Price
      * @var DateTime
      *
      * @ORM\Column(type="datetime")
+     *
+     * @Serializer\Expose()
+     * @Serializer\Type("DateTime<'Y-m-d H:i:s'>")
      */
     private $date;
 
@@ -54,6 +66,8 @@ class Price
      * @var int
      *
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose()
      */
     private $dateTimestanp;
 

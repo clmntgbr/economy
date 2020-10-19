@@ -62,5 +62,38 @@ class CreateGasPriceHandler implements MessageHandlerInterface
 
         $this->em->persist($price);
         $this->em->flush();
+
+        $this->updateLastPrices($station, $message, $price);
+
+        $station->setIsClosed(false);
+        $station->setClosedAt(null);
+
+        $this->em->persist($station);
+        $this->em->flush();
+    }
+
+    private function updateLastPrices(Station $station, CreateGasPrice $message, Price $price)
+    {
+        $prices = $station->getLastPrices();
+
+        if (count($prices) <= 0) {
+            $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate()];
+            $station->setLastPrices($prices);
+            return;
+        }
+
+        foreach ($prices as $key => $value) {
+            if (isset($prices[$message->getTypeId()]) && ($prices[$message->getTypeId()]['date'] < $message->getDate())) {
+                $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate()];
+                continue;
+            }
+
+            if (!isset($prices[$message->getTypeId()])) {
+                $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate()];
+                continue;
+            }
+        }
+
+        $station->setLastPrices($prices);
     }
 }

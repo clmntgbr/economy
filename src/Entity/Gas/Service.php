@@ -7,10 +7,13 @@ use App\Traits\DoctrineEventsTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="gas_service")
  * @ORM\Entity(repositoryClass=ServiceRepository::class)
+ *
+ * @Serializer\ExclusionPolicy(policy="all")
  */
 class Service
 {
@@ -20,6 +23,8 @@ class Service
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose()
      */
     private $id;
 
@@ -27,6 +32,8 @@ class Service
      * @var string
      *
      * @ORM\Column(type="string")
+     *
+     * @Serializer\Expose()
      */
     private $name;
 

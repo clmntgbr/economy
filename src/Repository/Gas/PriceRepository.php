@@ -3,6 +3,7 @@
 namespace App\Repository\Gas;
 
 use App\Entity\Gas\Price;
+use App\Entity\Gas\Station;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,5 +38,16 @@ class PriceRepository extends ServiceEntityRepository
         }
 
         return $array;
+    }
+
+    public function findGasPriceByIds(string $ids)
+    {
+        $query = $this->createQueryBuilder('s')
+            ->where('s.id IN (:ids)')
+            ->setParameter('ids', explode(",", $ids))
+            ->orderBy('s.id', 'ASC')
+            ->getQuery();
+
+        return $query->getResult();
     }
 }

@@ -26,7 +26,7 @@ class User implements UserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Serializer\Expose
+     * @Serializer\Expose()
      */
     private $id;
 
@@ -36,14 +36,14 @@ class User implements UserInterface
      * @Assert\NotBlank(groups={"User:Register", "User:Authentication"})
      * @Assert\Email(groups={"User:Register", "User:Authentication"})
      *
-     * @Serializer\Expose
+     * @Serializer\Expose()
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
      *
-     * @Serializer\Expose
+     * @Serializer\Expose()
      */
     private $roles = [];
 
