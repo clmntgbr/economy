@@ -1,6 +1,5 @@
-### **LexikJWTAuthenticationBundle**
-
 `composer install`
+
 
 `mkdir -p config/jwt`
 
@@ -8,8 +7,11 @@
 
 `openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout`
 
+
 `symfony server:start`
+
 
 `bin/console app:gas-price`
 
-`bin/console messenger:consume async_priority_high async_priority_low -vv`
+`bin/console messenger:consume async_priority_high gas_price_async_priority_high -vv`
+`bin/console messenger:consume async_priority_high gas_price_async_priority_low -vv`
