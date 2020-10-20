@@ -2,9 +2,6 @@
 
 namespace App\Command\Gas;
 
-use App\Entity\Gas\Service;
-use App\Entity\Gas\Station;
-use App\Entity\Gas\Type;
 use App\Exceptions\GasPriceCommandException;
 use App\Message\Gas\CreateGasPrice;
 use App\Message\Gas\CreateGasService;
@@ -92,8 +89,6 @@ class GasPriceCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $max = 100;
-        $i = 0;
         $this->stations = $this->stationRepository->findGasStationById();
         $this->types = $this->typeRepository->findGasTypeById();
         $this->services = $this->serviceRepository->findGasServiceByName();
@@ -115,12 +110,6 @@ class GasPriceCommand extends Command
             $this->createGasPrices($element, $stationId);
 
             $progressBar->advance();
-
-            $i++;
-
-            if ($max == $i) {
-                break(1);
-            }
         }
 
         FileSystem::delete($xmlPath);
@@ -153,7 +142,7 @@ class GasPriceCommand extends Command
     private function createGasServices(string $stationId, SimpleXMLElement $element): void
     {
         foreach ((array)$element->services->service as $item) {
-//            $this->messageBus->dispatch(new CreateGasService($stationId, $item));
+            $this->messageBus->dispatch(new CreateGasService($stationId, $item));
             if (!isset($this->services[$item])) {
                 $this->services[$item] = $item;
             }

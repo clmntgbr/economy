@@ -2,13 +2,9 @@
 
 namespace App\MessageHandler\Gas;
 
-use App\Command\Gas\GasPriceCommand;
-use App\Entity\Gas\Service;
 use App\Entity\Gas\Station;
 use App\Message\Gas\CreateGasStation;
 use App\Repository\Gas\StationRepository;
-use App\Util\FileSystem;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 

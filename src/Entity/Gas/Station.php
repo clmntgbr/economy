@@ -4,15 +4,13 @@ namespace App\Entity\Gas;
 
 use App\Entity\Address;
 use App\Entity\Google\Place;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use App\Repository\Gas\StationRepository;
 use App\Traits\DoctrineEventsTrait;
-use JMS\Serializer\Annotation as Serializer;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use JMS\Serializer\Annotation as Serializer;
 
 
 /**
