@@ -19,12 +19,12 @@ class ServiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Service::class);
     }
 
-    public function findGasServiceById()
+    public function findGasServiceByName()
     {
         $query = $this->createQueryBuilder('s')
-            ->select('s.id')
-            ->orderBy('s.id', 'ASC')
-            ->indexBy('s', 's.id')
+            ->select('s.name')
+            ->orderBy('s.name', 'ASC')
+            ->indexBy('s', 's.name')
             ->getQuery();
 
         return $query->getResult();

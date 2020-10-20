@@ -5,10 +5,13 @@ namespace App\Entity\Google;
 use App\Repository\Google\PlaceRepository;
 use App\Traits\DoctrineEventsTrait;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="google_place")
  * @ORM\Entity(repositoryClass=PlaceRepository::class)
+ *
+ * @Serializer\ExclusionPolicy(policy="all")
  */
 class Place
 {
@@ -18,6 +21,8 @@ class Place
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose()
      */
     private $id;
 
@@ -25,6 +30,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $googleId;
 
@@ -32,6 +39,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $url;
 
@@ -39,6 +48,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $website;
 
@@ -46,6 +57,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $phoneNumber;
 
@@ -53,6 +66,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true, unique=true)
+     *
+     * @Serializer\Expose()
      */
     private $placeId;
 
@@ -60,6 +75,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $compoundCode;
 
@@ -67,6 +84,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $globalCode;
 
@@ -74,6 +93,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $googleRating;
 
@@ -81,6 +102,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $reference;
 
@@ -88,6 +111,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $userRatingsTotal;
 
@@ -95,6 +120,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $icon;
 
@@ -102,6 +129,8 @@ class Place
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $businessStatus;
 

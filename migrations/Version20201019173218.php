@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20201016190202 extends AbstractMigration
+final class Version20201019173218 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -20,12 +20,14 @@ final class Version20201016190202 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE gas_price ADD date_timestanp INT NOT NULL');
+        $this->addSql('CREATE TABLE media (id INT AUTO_INCREMENT NOT NULL, path VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, mime_type VARCHAR(255) NOT NULL, type VARCHAR(255) NOT NULL, size NUMERIC(10, 0) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE gas_station ADD last_prices JSON NOT NULL');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE gas_price DROP date_timestanp');
+        $this->addSql('DROP TABLE media');
+        $this->addSql('ALTER TABLE gas_station DROP last_prices');
     }
 }

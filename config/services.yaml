@@ -29,5 +29,9 @@ services:
 
     app.jwt_token_authenticator:
         class: 'App\Security\Guard\JWTTokenAuthenticator'
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+
+    app.listener.gas.station:
+        class: App\Listener\Gas\StationListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad,  method: postLoad }
+

@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Entity\General;
+namespace App\Entity;
 
-use App\Repository\General\AddressRepository;
+use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=AddressRepository::class)
+ *
+ * @Serializer\ExclusionPolicy(policy="all")
  */
 class Address
 {
@@ -21,6 +24,8 @@ class Address
      * @var string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $vicinity;
 
@@ -28,6 +33,8 @@ class Address
      * @var string
      *
      * @ORM\Column(type="string")
+     *
+     * @Serializer\Expose()
      */
     private $street;
 
@@ -35,6 +42,8 @@ class Address
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $number;
 
@@ -42,6 +51,8 @@ class Address
      * @var string
      *
      * @ORM\Column(type="string")
+     *
+     * @Serializer\Expose()
      */
     private $city;
 
@@ -49,6 +60,8 @@ class Address
      * @var string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $region;
 
@@ -56,6 +69,8 @@ class Address
      * @var string
      *
      * @ORM\Column(type="string")
+     *
+     * @Serializer\Expose()
      */
     private $postalCode;
 
@@ -63,6 +78,8 @@ class Address
      * @var string
      *
      * @ORM\Column(type="string")
+     *
+     * @Serializer\Expose()
      */
     private $country;
 
@@ -70,6 +87,8 @@ class Address
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $longitude;
 
@@ -77,8 +96,38 @@ class Address
      * @var ?string
      *
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
      */
     private $latitude;
+
+    public function __construct(string $postalCode, $longitude, $latitude, string $street, string $city, string $country)
+    {
+        $this->postalCode = $postalCode;
+        $this->updateLongitude($longitude);
+        $this->updateLatitude($latitude);
+        $this->street = $street;
+        $this->city = $city;
+        $this->country = $country;
+    }
+
+    public function updateLongitude($longitude): self
+    {
+        if ($longitude) {
+            $this->longitude = $longitude/100000;
+        }
+
+        return $this;
+    }
+
+    public function updateLatitude($latitude): self
+    {
+        if ($latitude) {
+            $this->latitude = $latitude/100000;
+        }
+
+        return $this;
+    }
 
     public function getId(): ?int
     {

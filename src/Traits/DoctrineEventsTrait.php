@@ -6,7 +6,11 @@ use App\Entity\User\User;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\ExclusionPolicy(policy="all")
+ */
 trait DoctrineEventsTrait
 {
     /**
@@ -14,6 +18,9 @@ trait DoctrineEventsTrait
      *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
+     *
+     * @Serializer\Expose
+     * @Serializer\Type("DateTime<'Y-m-d H:i:s'>")
      */
     public $createdAt;
 
@@ -22,6 +29,9 @@ trait DoctrineEventsTrait
      *
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Serializer\Expose
+     * @Serializer\Type("DateTime<'Y-m-d H:i:s'>")
      */
     public $updatedAt;
 
