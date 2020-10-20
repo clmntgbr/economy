@@ -13,6 +13,6 @@
 
 `bin/console app:gas-price`
 
-`bin/console messenger:consume async_priority_high gas_price_async_priority_high -vv`
+`bin/console messenger:consume gas_price_async_priority_high -vv`
 
-`bin/console messenger:consume async_priority_high gas_price_async_priority_low -vv`
+`bin/console messenger:consume gas_price_async_priority_low -vv`
