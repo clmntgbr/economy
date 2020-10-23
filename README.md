@@ -1,5 +1,6 @@
 `composer install`
 
+**_Config_**
 
 `mkdir -p config/jwt`
 
@@ -7,12 +8,14 @@
 
 `openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout`
 
-
 `symfony server:start`
 
+**_Commands_**
 
 `bin/console app:gas-price`
 
-`bin/console messenger:consume gas_price_async_priority_high -vv`
+`bin/console app:gas-station-closed`
 
-`bin/console messenger:consume gas_price_async_priority_low -vv`
+`bin/console messenger:consume async_priority_high -vv`
+
+`bin/console messenger:consume async_priority_low -vv`
