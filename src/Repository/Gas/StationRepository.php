@@ -29,4 +29,17 @@ class StationRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+
+    public function findGasStationNotClosed()
+    {
+
+        $sql = "SELECT p.id as id
+                FROM gas_station p 
+                WHERE p.is_closed IS FALSE
+                ORDER BY p.id ASC";
+
+        $statement = $this->getEntityManager()->getConnection()->prepare($sql);
+        $statement->execute();
+        return $statement->fetchAllAssociative();
+    }
 }
