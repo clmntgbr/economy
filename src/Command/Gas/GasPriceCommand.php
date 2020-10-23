@@ -2,6 +2,8 @@
 
 namespace App\Command\Gas;
 
+use App\Entity\Gas\Station;
+use App\Entity\Gas\Type;
 use App\Exceptions\GasPriceCommandException;
 use App\Message\Gas\CreateGasPrice;
 use App\Message\Gas\CreateGasService;

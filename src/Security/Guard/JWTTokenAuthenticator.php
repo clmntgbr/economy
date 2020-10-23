@@ -103,7 +103,7 @@ class JWTTokenAuthenticator extends \Lexik\Bundle\JWTAuthenticationBundle\Securi
         }
 
         if (false === ($jsonWebToken = $tokenExtractor->extract($request))) {
-            return;
+            throw new InvalidTokenException('Invalid JWT Token');
         }
 
         $preAuthToken = new PreAuthenticationJWTUserToken($jsonWebToken);

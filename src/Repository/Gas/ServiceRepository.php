@@ -22,7 +22,7 @@ class ServiceRepository extends ServiceEntityRepository
     public function findGasServiceByName()
     {
         $query = $this->createQueryBuilder('s')
-            ->select('s.name')
+            ->select('s.name, s.id')
             ->orderBy('s.name', 'ASC')
             ->indexBy('s', 's.name')
             ->getQuery();
