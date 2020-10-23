@@ -2,17 +2,15 @@
 
 namespace App\Message\Gas;
 
-use DateTime;
-
 class ClosedGasStation
 {
     /** @var string */
     private $stationId;
 
-    /** @var DateTime */
+    /** @var string */
     private $date;
 
-    public function __construct(string $stationId, DateTime $date) {
+    public function __construct(string $stationId, string $date) {
         $this->stationId = $stationId;
         $this->date = $date;
     }
@@ -26,9 +24,9 @@ class ClosedGasStation
     }
 
     /**
-     * @return DateTime
+     * @return string
      */
-    public function getDate(): DateTime
+    public function getDate(): string
     {
         return $this->date;
     }

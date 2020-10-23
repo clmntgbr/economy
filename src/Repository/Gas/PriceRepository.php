@@ -25,10 +25,10 @@ class PriceRepository extends ServiceEntityRepository
                 FROM gas_price p 
                 GROUP BY p.station_id, p.type_id 
                 ORDER BY p.station_id ASC";
-        $getConnection = $this->getEntityManager()->getConnection();
-        $statement = $getConnection->prepare($sql);
+
+        $statement = $this->getEntityManager()->getConnection()->prepare($sql);
         $statement->execute();
-        $result = $statement->fetchAll();
+        $result = $statement->fetchAllAssociative();
 
         $array = [];
 

@@ -5,6 +5,7 @@ namespace App\MessageHandler\Gas;
 use App\Entity\Gas\Station;
 use App\Message\Gas\ClosedGasStation;
 use App\Repository\Gas\StationRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -38,7 +39,7 @@ class ClosedGasStationHandler implements MessageHandlerInterface
         }
 
         $station->setIsClosed(true);
-        $station->setClosedAt($message->getDate());
+        $station->setClosedAt(DateTime::createFromFormat('Y-m-d H:i:s', $message->getDate()));
         $this->em->persist($station);
         $this->em->flush();
     }

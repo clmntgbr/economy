@@ -2,7 +2,6 @@
 
 namespace App\Command\Gas;
 
-use App\Entity\Gas\Price;
 use App\Message\Gas\ClosedGasStation;
 use App\Repository\Gas\PriceRepository;
 use App\Repository\Gas\StationRepository;
@@ -12,6 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class GasStationClosedCommand extends Command
@@ -51,28 +51,20 @@ class GasStationClosedCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
+        $io->title('Finding Gas Stations ...');
+
         $this->stations = $this->stationRepository->findGasStationNotClosed();
 
         $date = ((new DateTime('now'))->sub(new DateInterval(self::CLOSED_MONTH)))->format('Y-m-d 00:00:00');
 
         $progressBar = new ProgressBar($output, count($this->stations));
 
-        foreach ($this->stations as $value) {
-            $station = $this->stationRepository->findOneBy(['id' => $value['id']]);
-
-            $price = $station->getPrices()->first();
-
-            if (!($price instanceof Price)) {
-                $progressBar->advance();
-                continue;
+        foreach ($this->stations as $station) {
+            if ($station['date'] < $date) {
+                $this->messageBus->dispatch(new ClosedGasStation($station['station_id'], $station['date']));
             }
-
-            $priceDate = $price->getDate();
-
-            if ($priceDate->format("Y-m-d 00:00:00") < $date) {
-                $this->messageBus->dispatch(new ClosedGasStation($station->getId(), $priceDate));
-            }
-
             $progressBar->advance();
         }
 
