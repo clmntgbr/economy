@@ -2,8 +2,6 @@
 
 namespace App\Command\Gas;
 
-use App\Entity\Gas\Station;
-use App\Entity\Gas\Type;
 use App\Exceptions\GasPriceCommandException;
 use App\Message\Gas\CreateGasPrice;
 use App\Message\Gas\CreateGasService;
@@ -20,6 +18,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class GasPriceCommand extends Command
@@ -91,6 +90,10 @@ class GasPriceCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
+        $io->title('Creating Up To Date Prices ...');
+
         $this->stations = $this->stationRepository->findGasStationById();
         $this->types = $this->typeRepository->findGasTypeById();
         $this->services = $this->serviceRepository->findGasServiceByName();
@@ -117,6 +120,8 @@ class GasPriceCommand extends Command
         FileSystem::delete($xmlPath);
 
         $progressBar->finish();
+
+        $io->writeln('');
 
         return Command::SUCCESS;
     }

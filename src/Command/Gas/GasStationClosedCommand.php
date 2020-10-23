@@ -70,6 +70,8 @@ class GasStationClosedCommand extends Command
 
         $progressBar->finish();
 
+        $io->writeln('');
+
         return Command::SUCCESS;
     }
 }
