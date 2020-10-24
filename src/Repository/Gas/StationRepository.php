@@ -30,20 +30,35 @@ class StationRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findGasStationMap(float $longitude, float $latitude, float $radius)
+    public function findGasStationByIds(string $ids)
     {
         $query = $this->createQueryBuilder('s')
-            ->select('s')
-            ->join('s.address', 'a', 'WITH', 's.address = a.id')
-            ->where('(SQRT( POW(69.1 * (a.latitude - :latitude), 2) + POW(69.1 * (:longitude - a.longitude) * COS(a.latitude / 57.3), 2))*1000) < :radius')
-            ->setParameter('latitude', $latitude)
-            ->setParameter('longitude', $longitude)
-            ->setParameter('radius', $radius)
+            ->where('s.id IN (:ids)')
+            ->setParameter('ids', explode(",", $ids))
             ->orderBy('s.id', 'ASC')
-            ->setMaxResults(500)
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    public function findGasStationMap(float $longitude, float $latitude, float $radius)
+    {
+        $query = "SELECT s.id as station_id, (SQRT(POW(69.1 * (a.latitude - $latitude), 2) + POW(69.1 * ($longitude - a.longitude) * COS(a.latitude / 57.3), 2))*1000) as distance
+                  FROM address a
+                  INNER JOIN gas_station s ON s.address_id = a.id
+                  WHERE a.longitude IS NOT NULL AND a.latitude IS NOT NULL
+                  HAVING `distance` < $radius
+                  ORDER BY `distance` ASC LIMIT 500;";
+
+        $statement = $this->getEntityManager()->getConnection()->prepare($query);
+        $statement->execute();
+        $stationIds = $statement->fetchAllAssociative();
+
+        $ids = implode(',', array_map(function ($entry) {
+            return $entry['station_id'];
+        }, $stationIds));
+
+        return $this->findGasStationByIds($ids);
     }
 
     public function findGasStationNotClosed()
