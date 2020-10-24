@@ -99,7 +99,7 @@ class Station
      * @var Price[]
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Gas\Price", mappedBy="station", cascade={"persist"}, fetch="EXTRA_LAZY")
-     * @ORM\OrderBy({"date" = "DESC", "type" = "ASC"})
+     * @ORM\OrderBy({"date" = "ASC", "type" = "ASC"})
      */
     private $prices;
 

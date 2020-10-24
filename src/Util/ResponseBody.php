@@ -23,8 +23,9 @@ class ResponseBody
     {
         return [
             'status' => $code,
+            'data_count' => count($data),
             'data' => $data,
-            'errorsCount' => count($errors),
+            'errors_count' => count($errors),
             'errors' => $errors,
         ];
     }
