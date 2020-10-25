@@ -4,7 +4,6 @@ namespace App\MessageHandler\Gas;
 
 use App\Entity\Gas\Type;
 use App\Message\Gas\CreateGasType;
-use App\Repository\Gas\StationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -13,7 +12,7 @@ class CreateGasTypeHandler implements MessageHandlerInterface
     /** @var EntityManagerInterface */
     private $em;
 
-    public function __construct(EntityManagerInterface $em, StationRepository $stationRepository)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }

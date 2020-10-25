@@ -2,10 +2,12 @@
 
 namespace App\Entity\Gas;
 
+use App\Command\GasStationGoogleMapCommand;
 use App\Entity\Address;
 use App\Entity\Google\Place;
 use App\Repository\Gas\StationRepository;
 use App\Traits\DoctrineEventsTrait;
+use App\Util\FileSystem;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -70,11 +72,46 @@ class Station
     /**
      * @var bool
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default" : 0})
      *
      * @Serializer\Expose()
      */
     private $isClosed;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $isForced;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $isFormatted;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $isGoogled;
+
+    /**
+     * @var ?float
+     *
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $distanceMatch;
+
+    /**
+     * @var ?float
+     *
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $similarText;
 
     /**
      * @var ?\DateTime
@@ -250,7 +287,11 @@ class Station
 
     public function setName(?string $name): self
     {
-        $this->name = $name;
+        if (is_null($name)) {
+            $this->name = $name;
+        }
+
+        $this->name = ucwords(strtolower(FileSystem::stripAccents($name)));
 
         return $this;
     }
@@ -337,6 +378,117 @@ class Station
     public function setLastPrices(array $lastPrices): self
     {
         $this->lastPrices = $lastPrices;
+
+        return $this;
+    }
+
+    public function getIsForced(): ?bool
+    {
+        return $this->isForced;
+    }
+
+    public function setIsForced(bool $isForced): self
+    {
+        $this->isForced = $isForced;
+
+        return $this;
+    }
+
+    public function getIsGoogled(): ?bool
+    {
+        return $this->isGoogled;
+    }
+
+    public function setIsGoogled(bool $isGoogled): self
+    {
+        $this->isGoogled = $isGoogled;
+
+        return $this;
+    }
+
+    public function getIsFormatted(): ?bool
+    {
+        return $this->isFormatted;
+    }
+
+    public function setIsFormatted(bool $isFormatted): self
+    {
+        $this->isFormatted = $isFormatted;
+
+        return $this;
+    }
+
+    public function getDistanceMatch(): ?float
+    {
+        return $this->distanceMatch;
+    }
+
+    public function setDistanceMatch(?float $distanceMatch): self
+    {
+        $this->distanceMatch = $distanceMatch;
+
+        return $this;
+    }
+
+    public function getSimilarText(): ?float
+    {
+        return $this->similarText;
+    }
+
+    public function setSimilarText(?float $similarText): self
+    {
+        $this->similarText = $similarText;
+
+        return $this;
+    }
+
+    public function updateAddress(?array $addressComponents)
+    {
+        foreach ($addressComponents as $component) {
+            foreach ($component['types'] as $type) {
+                switch ($type) {
+                    case 'street_number':
+                        $this->address->setNumber($component['long_name']);
+                        break;
+                    case 'route':
+                        $this->address->setStreet($component['long_name']);
+                        break;
+                    case 'locality':
+                        $this->address->setCity($component['long_name']);
+                        break;
+                    case 'administrative_area_level_1':
+                        $this->address->setRegion($component['long_name']);
+                        break;
+                    case 'country':
+                        $this->address->setCountry($component['long_name']);
+                        break;
+                    case 'postal_code':
+                        $this->address->setPostalCode($component['long_name']);
+                        break;
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    public function setLongitude($longitude)
+    {
+        $this->address->setLongitude($longitude);
+
+        return $this;
+    }
+
+    public function setLatitude($latitude)
+    {
+        $this->address->setLatitude($latitude);
+
+        return $this;
+    }
+
+    public function setVicinity(?string $vicinity)
+    {
+        $this->address->setVicinity($vicinity);
 
         return $this;
     }
