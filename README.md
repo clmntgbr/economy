@@ -16,6 +16,10 @@
 
 `bin/console app:gas-station-closed`
 
+`bin/console app:gas-google-place`
+
+**_Workers_**
+
 `bin/console messenger:consume async_priority_high -vv`
 
 `bin/console messenger:consume async_priority_low -vv`
