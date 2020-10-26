@@ -5,6 +5,8 @@ namespace App\Entity\Gas;
 use App\Command\GasStationGoogleMapCommand;
 use App\Entity\Address;
 use App\Entity\Google\Place;
+use App\Entity\Media;
+use App\Entity\Review;
 use App\Repository\Gas\StationRepository;
 use App\Traits\DoctrineEventsTrait;
 use App\Util\FileSystem;
@@ -133,6 +135,16 @@ class Station
     private $address;
 
     /**
+     * @var Media
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\Media", cascade={"persist", "remove"}, fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="preview_id", referencedColumnName="id", nullable=true)
+     *
+     * @Serializer\Expose()
+     */
+    private $preview;
+
+    /**
      * @var Price[]
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Gas\Price", mappedBy="station", cascade={"persist"}, fetch="EXTRA_LAZY")
@@ -158,6 +170,14 @@ class Station
     private $googlePlace;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Review", cascade={"persist"}, fetch="EXTRA_LAZY")
+     * @ORM\JoinTable(name="gas_station_reviews")
+     *
+     * @Serializer\Expose()
+     */
+    private $reviews;
+
+    /**
      * @var array
      *
      * @ORM\Column(type="array")
@@ -176,9 +196,13 @@ class Station
         $this->googlePlace = new Place();
 
         $this->isClosedOrNot();
+        $this->isForced = false;
+        $this->isGoogled = false;
+        $this->isFormatted = false;
 
         $this->prices = new ArrayCollection();
         $this->services = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function isClosedOrNot()
@@ -489,6 +513,42 @@ class Station
     public function setVicinity(?string $vicinity)
     {
         $this->address->setVicinity($vicinity);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Review[]
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): self
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews[] = $review;
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): self
+    {
+        $this->reviews->removeElement($review);
+
+        return $this;
+    }
+
+    public function getPreview(): ?Media
+    {
+        return $this->preview;
+    }
+
+    public function setPreview(?Media $preview): self
+    {
+        $this->preview = $preview;
 
         return $this;
     }

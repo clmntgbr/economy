@@ -83,7 +83,7 @@ class GasGooglePlaceCommand extends Command
             }
 
             if (0 > count($interests)) {
-                $this->messageBus->dispatch(new FailedGasStationGooglePlace($value['id'], true, false));
+                $this->messageBus->dispatch(new FailedGasStationGooglePlace($value['id'], true, false, $nearBy));
                 $progressBar->advance();
                 continue;
             }
@@ -100,7 +100,7 @@ class GasGooglePlaceCommand extends Command
             }
 
             if (0 >= count($similarText)) {
-                $this->messageBus->dispatch(new FailedGasStationGooglePlace($value['id'], true, false));
+                $this->messageBus->dispatch(new FailedGasStationGooglePlace($value['id'], true, false, $interests));
                 $progressBar->advance();
                 continue;
             }

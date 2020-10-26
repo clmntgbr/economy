@@ -13,10 +13,22 @@ class FailedGasStationGooglePlace
     /** @var bool */
     private $isForced;
 
-    public function __construct(string $stationId, bool $isGoogled, bool $isForced) {
+    /** @var array */
+    private $nearBy;
+
+    public function __construct(string $stationId, bool $isGoogled, bool $isForced, array $nearBy) {
         $this->stationId = $stationId;
         $this->isGoogled = $isGoogled;
         $this->isForced = $isForced;
+        $this->nearBy = $nearBy;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNearBy(): array
+    {
+        return $this->nearBy;
     }
 
     /**

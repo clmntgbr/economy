@@ -3,9 +3,13 @@
 namespace App\MessageHandler\Gas;
 
 use App\Entity\Gas\Station;
+use App\Entity\Media;
+use App\Entity\Review;
 use App\Message\Gas\CreateGasStationGooglePlace;
 use App\Repository\Gas\StationRepository;
+use App\Util\FileSystem;
 use App\Util\GooglePlace;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -77,8 +81,33 @@ class CreateGasStationGooglePlaceHandler implements MessageHandlerInterface
             ->setNearbysearch($message->getNearBy())
             ->setWebsite($details['website'] ?? null);
 
+        $this->getReviews($station, $details);
+        $this->getPreview($station);
+
         $this->em->persist($station);
         $this->em->persist($place);
         $this->em->flush();
+    }
+
+    private function getReviews(Station $station, array $details)
+    {
+        if (!isset($details['reviews'])) {
+            return;
+        }
+
+        foreach ($details['reviews'] as $detail) {
+            $review = new Review($detail['text'] ?? null, $detail['language'] ?? null, $detail['rating'] ?? null, DateTime::createFromFormat('U', $detail['time'] ?? true),null);
+            $station->addReview($review);
+        }
+    }
+    private function getPreview(Station $station)
+    {
+        foreach (Media::GAS_STATION_IMG as $key => $item) {
+            if (false !== strpos(strtolower(FileSystem::stripAccents($station->getName())), $key)) {
+                $media = new Media(Media::PUBLIC_GAS_STATION_IMG, $item, "image/jpg","jpg",0);
+                $station->setPreview($media);
+                break(1);
+            }
+        }
     }
 }

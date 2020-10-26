@@ -41,7 +41,13 @@ class FailedGasStationGooglePlaceHandler implements MessageHandlerInterface
             ->setIsGoogled($message->isGoogled())
             ->setIsForced($message->isForced());
 
+        $place = $station->getGooglePlace();
+
+        $place
+            ->setNearbysearch($message->getNearBy());
+
         $this->em->persist($station);
+        $this->em->persist($place);
         $this->em->flush();
     }
 }
