@@ -31,11 +31,12 @@ class StationListener
     {
         $entity = $args->getObject();
         if ($entity instanceof Station && $this->tokenStorage->getToken() && $this->tokenStorage->getToken()->getUser() instanceof User) {
+
             $ids = implode(',', array_map(function ($entry) {
                 return $entry['id'];
             }, $entity->getLastPrices()));
 
-            $entity->setLastPrices($this->priceRepository->findGasPriceByIds($ids));
+            $entity->setLastPricesEntities($this->priceRepository->findGasPriceByIds($ids));
         }
     }
 }

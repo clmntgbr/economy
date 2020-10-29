@@ -181,11 +181,16 @@ class Station
      * @var array
      *
      * @ORM\Column(type="array")
+     */
+    private $lastPrices = [];
+
+    /**
+     * @var Price[]|null
      *
      * @Serializer\Expose()
      * @Serializer\SerializedName("prices")
      */
-    private $lastPrices = [];
+    private $lastPricesEntities;
 
     public function __construct(string $id, string $pop, string $postalCode, string $longitude, string $latitude, string $street, string $city, string $country, array $element)
     {
@@ -551,5 +556,21 @@ class Station
         $this->preview = $preview;
 
         return $this;
+    }
+
+    /**
+     * @return Price[]|null
+     */
+    public function getLastPricesEntities(): ?array
+    {
+        return $this->lastPricesEntities;
+    }
+
+    /**
+     * @param Price[]|null $lastPricesEntities
+     */
+    public function setLastPricesEntities(?array $lastPricesEntities): void
+    {
+        $this->lastPricesEntities = $lastPricesEntities;
     }
 }

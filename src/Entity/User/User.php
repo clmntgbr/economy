@@ -2,8 +2,11 @@
 
 namespace App\Entity\User;
 
+use App\Entity\Gas\Station;
 use App\Repository\User\UserRepository;
 use App\Traits\DoctrineEventsTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -60,10 +63,19 @@ class User implements UserInterface
      */
     private $isActive;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Gas\Station")
+     * @ORM\JoinTable(name="user_like_gas_stations")
+     *
+     * @Serializer\Expose()
+     */
+    private $gasStationsLikes;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
         $this->isActive = true;
+        $this->gasStationsLikes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -152,6 +164,41 @@ class User implements UserInterface
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Station[]
+     */
+    public function getGasStationsLikes(): Collection
+    {
+        return $this->gasStationsLikes;
+    }
+
+    public function addGasStationsLike(Station $gasStationsLike): self
+    {
+        if (!$this->gasStationsLikes->contains($gasStationsLike)) {
+            $this->gasStationsLikes[] = $gasStationsLike;
+        }
+
+        return $this;
+    }
+
+    public function gasStationLike(Station $station): self
+    {
+        if ($this->gasStationsLikes->contains($station)) {
+            $this->removeGasStationsLike($station);
+            return $this;
+        }
+
+        $this->addGasStationsLike($station);
+        return $this;
+    }
+
+    public function removeGasStationsLike(Station $gasStationsLike): self
+    {
+        $this->gasStationsLikes->removeElement($gasStationsLike);
 
         return $this;
     }
