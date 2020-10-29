@@ -24,6 +24,7 @@ class Price
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Price"})
      */
     private $id;
 
@@ -33,6 +34,7 @@ class Price
      * @ORM\ManyToOne(targetEntity="App\Entity\Gas\Type", inversedBy="prices", fetch="EXTRA_LAZY", cascade={"persist"})
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Price"})
      */
     public $type;
 
@@ -49,6 +51,7 @@ class Price
      * @ORM\Column(type="float")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Price"})
      */
     private $value;
 
@@ -58,6 +61,7 @@ class Price
      * @ORM\Column(type="datetime")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Price"})
      * @Serializer\Type("DateTime<'Y-m-d H:i:s'>")
      */
     private $date;
@@ -68,6 +72,7 @@ class Price
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Price"})
      */
     private $dateTimestanp;
 

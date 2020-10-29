@@ -34,6 +34,7 @@ class Station
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $id;
 
@@ -43,6 +44,7 @@ class Station
      * @ORM\Column(type="string")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $pop;
 
@@ -52,6 +54,7 @@ class Station
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $name;
 
@@ -61,6 +64,7 @@ class Station
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $company;
 
@@ -77,6 +81,7 @@ class Station
      * @ORM\Column(type="boolean", options={"default" : 0})
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $isClosed;
 
@@ -84,6 +89,9 @@ class Station
      * @var bool
      *
      * @ORM\Column(type="boolean", options={"default" : 0})
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $isForced;
 
@@ -91,6 +99,9 @@ class Station
      * @var bool
      *
      * @ORM\Column(type="boolean", options={"default" : 0})
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $isFormatted;
 
@@ -98,6 +109,9 @@ class Station
      * @var bool
      *
      * @ORM\Column(type="boolean", options={"default" : 0})
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $isGoogled;
 
@@ -105,6 +119,9 @@ class Station
      * @var ?float
      *
      * @ORM\Column(type="float", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $distanceMatch;
 
@@ -112,6 +129,9 @@ class Station
      * @var ?float
      *
      * @ORM\Column(type="float", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $similarText;
 
@@ -121,6 +141,7 @@ class Station
      * @ORM\Column(type="datetime", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $closedAt;
 
@@ -131,6 +152,7 @@ class Station
      * @ORM\JoinColumn(name="address_id", referencedColumnName="id")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $address;
 
@@ -141,6 +163,7 @@ class Station
      * @ORM\JoinColumn(name="preview_id", referencedColumnName="id", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $preview;
 
@@ -156,6 +179,7 @@ class Station
      * @ORM\ManyToMany(targetEntity="App\Entity\Gas\Service", mappedBy="stations", cascade={"persist"}, fetch="EXTRA_LAZY")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $services;
 
@@ -166,6 +190,7 @@ class Station
      * @ORM\JoinColumn(name="google_place_id", referencedColumnName="id")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $googlePlace;
 
@@ -174,6 +199,7 @@ class Station
      * @ORM\JoinTable(name="gas_station_reviews")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation"})
      */
     private $reviews;
 
@@ -188,6 +214,7 @@ class Station
      * @var Price[]|null
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation", "GasStation:Price"})
      * @Serializer\SerializedName("prices")
      */
     private $lastPricesEntities;

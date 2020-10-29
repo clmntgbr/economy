@@ -20,6 +20,9 @@ class Review
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
      */
     private $id;
 
@@ -29,6 +32,7 @@ class Review
      * @ORM\Column(type="text", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
      */
     private $text;
 
@@ -38,6 +42,7 @@ class Review
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
      */
     private $language;
 
@@ -47,6 +52,7 @@ class Review
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
      */
     private $rating;
 
@@ -56,6 +62,7 @@ class Review
      * @ORM\Column(type="datetime", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
      */
     private $date;
 
@@ -66,6 +73,7 @@ class Review
      * @ORM\Column(nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
      */
     public $user;
 

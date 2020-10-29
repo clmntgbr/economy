@@ -30,6 +30,7 @@ class User implements UserInterface
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $id;
 
@@ -40,6 +41,7 @@ class User implements UserInterface
      * @Assert\Email(groups={"User:Register", "User:Authentication"})
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $email;
 
@@ -47,6 +49,7 @@ class User implements UserInterface
      * @ORM\Column(type="json")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $roles = [];
 
@@ -60,6 +63,9 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="boolean")
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $isActive;
 
@@ -68,6 +74,7 @@ class User implements UserInterface
      * @ORM\JoinTable(name="user_like_gas_stations")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $gasStationsLikes;
 

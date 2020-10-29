@@ -26,6 +26,7 @@ class Type
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Type"})
      */
     private $id;
 
@@ -35,6 +36,7 @@ class Type
      * @ORM\Column(type="string")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Type"})
      */
     private $name;
 
@@ -45,6 +47,7 @@ class Type
      * @ORM\Column(length=128, unique=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Type"})
      */
     private $slug;
 

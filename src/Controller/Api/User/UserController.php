@@ -33,7 +33,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(path="/user", name="user")
-     * @Rest\View
+     * @Rest\View(serializerGroups={"User"})
      */
     public function getUserAction(Request $request, Security $security, StationRepository $stationRepository)
     {
@@ -43,7 +43,7 @@ class UserController extends AbstractFOSRestController
     /**
      * @Rest\Post(path="/user/like/gas_station/{id}", name="user_like_gas_station")
      * @ParamConverter("station", class="App\Entity\Gas\Station", options={"mapping": {"id": "id"}})
-     * @Rest\View
+     * @Rest\View(serializerGroups={"User", "User:LikeGasStation"})
      */
     public function postUserLikeGasStationAction(Request $request, Security $security, Station $station)
     {

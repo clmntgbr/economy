@@ -5,6 +5,8 @@ jms_serializer:
     property_naming:
         separator:  _
         lower_case: true
+    metadata:
+        auto_detection: true
 #    metadata:
 #        auto_detection: false
 #        directories:

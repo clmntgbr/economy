@@ -25,6 +25,7 @@ class Service
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Service"})
      */
     private $id;
 
@@ -34,6 +35,7 @@ class Service
      * @ORM\Column(type="string")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Service"})
      */
     private $name;
 

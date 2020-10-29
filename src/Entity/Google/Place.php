@@ -23,6 +23,7 @@ class Place
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $id;
 
@@ -32,6 +33,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $googleId;
 
@@ -41,6 +43,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $url;
 
@@ -50,6 +53,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $website;
 
@@ -59,6 +63,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $phoneNumber;
 
@@ -68,6 +73,7 @@ class Place
      * @ORM\Column(type="string", nullable=true, unique=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $placeId;
 
@@ -77,6 +83,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $compoundCode;
 
@@ -86,6 +93,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $globalCode;
 
@@ -95,6 +103,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $googleRating;
 
@@ -104,6 +113,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $reference;
 
@@ -113,6 +123,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $userRatingsTotal;
 
@@ -122,6 +133,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $icon;
 
@@ -131,6 +143,7 @@ class Place
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
      */
     private $businessStatus;
 

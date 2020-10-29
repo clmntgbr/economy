@@ -37,7 +37,7 @@ class GasStationController extends AbstractFOSRestController
     /**
      * @Rest\Get(path="/gas/station/{id}", name="gas_station_id")
      * @ParamConverter("station", class="App\Entity\Gas\Station", options={"mapping": {"id": "id"}})
-     * @Rest\View
+     * @Rest\View(serializerGroups={"GasStation", "GasStation:Price", "GasStation:Type", "GasStation:Service", "GooglePlace", "Review:GasStation"})
      */
     public function getGasStationById(Request $request, Station $station)
     {
@@ -47,7 +47,7 @@ class GasStationController extends AbstractFOSRestController
     /**
      * @Rest\Get(path="/gas/station/{id}/prices", name="gas_station_id_prices")
      * @ParamConverter("station", class="App\Entity\Gas\Station", options={"mapping": {"id": "id"}})
-     * @Rest\View
+     * @Rest\View(serializerGroups={"GasStation", "GasStation:Price", "GasStation:Type", "GasStation:Service", "GooglePlace", "Review:GasStation"})
      */
     public function getGasStationPricesById(Request $request, Station $station)
     {
@@ -59,7 +59,7 @@ class GasStationController extends AbstractFOSRestController
      * @Rest\RequestParam(name="longitude", requirements="\d+", strict=true, map=false, nullable=false)
      * @Rest\RequestParam(name="latitude", requirements="\d+", strict=true, map=false, nullable=false)
      * @Rest\RequestParam(name="radius", requirements="\d+", strict=true, map=false, nullable=false)
-     * @Rest\View
+     * @Rest\View(serializerGroups={"GasStation", "GasStation:Price", "GasStation:Type", "GasStation:Service", "GooglePlace", "Review:GasStation"})
      */
     public function getGasStationsMap(Request $request, float $longitude, float $latitude, float $radius = 500)
     {
