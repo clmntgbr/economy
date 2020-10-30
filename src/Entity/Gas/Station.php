@@ -34,7 +34,7 @@ class Station
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation"})
+     * @Serializer\Groups(groups={"GasStation", "User", "User:LikeGasStation"})
      */
     private $id;
 

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Util;
+namespace App\Util\Google;
 
 use App\Exceptions\GooglePlaces;
+use App\Util\DotEnv;
 use GuzzleHttp\Client;
 
-class GooglePlace
+class ApiPlace
 {
     const NEARBYSEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 

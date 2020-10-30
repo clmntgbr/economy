@@ -6,6 +6,7 @@ use App\Message\Gas\CreateGasStationGooglePlace;
 use App\Message\Gas\FailedGasStationGooglePlace;
 use App\Repository\Gas\StationRepository;
 use App\Repository\Google\PlaceRepository;
+use App\Util\Google\ApiPlace;
 use App\Util\GooglePlace;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Console\Command\Command;
@@ -27,8 +28,8 @@ class GasGooglePlaceCommand extends Command
     /** @var MessageBusInterface */
     private $messageBus;
 
-    /** @var GooglePlace */
-    private $googlePlace;
+    /** @var ApiPlace */
+    private $apiPlace;
 
     /** @var Slugify */
     private $slugify;
@@ -42,13 +43,13 @@ class GasGooglePlaceCommand extends Command
     public function __construct(
         StationRepository $stationRepository,
         MessageBusInterface $messageBus,
-        GooglePlace $googlePlace,
+        ApiPlace $apiPlace,
         PlaceRepository $placeRepository
     ) {
         parent::__construct(self::$defaultName);
         $this->stationRepository = $stationRepository;
         $this->messageBus = $messageBus;
-        $this->googlePlace = $googlePlace;
+        $this->apiPlace = $apiPlace;
         $this->placeRepository = $placeRepository;
         $this->slugify = new Slugify();;
         $this->stations = [];
@@ -69,14 +70,14 @@ class GasGooglePlaceCommand extends Command
 
         foreach ($this->stations as $value) {
             $interests = [];
-            $nearBy = $this->googlePlace->nearbysearch($value['longitude'], $value['latitude'], "gas_station");
+            $nearBy = $this->apiPlace->nearbysearch($value['longitude'], $value['latitude'], "gas_station");
 
             if ($nearBy === false) {
                 continue;
             }
 
             foreach ($nearBy as $result) {
-                $distance = $this->googlePlace->getDistanceBetweenTwoCoordinates($value['longitude'], $value['latitude'], $result['geometry']['location']['lng'], $result['geometry']['location']['lat']);
+                $distance = $this->apiPlace->getDistanceBetweenTwoCoordinates($value['longitude'], $value['latitude'], $result['geometry']['location']['lng'], $result['geometry']['location']['lat']);
                 if (750 >= $distance && !(isset($this->placeIds[$result['place_id']]))) {
                     $interests[(string)$distance] = $result;
                 }

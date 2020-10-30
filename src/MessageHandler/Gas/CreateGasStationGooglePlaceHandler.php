@@ -8,7 +8,7 @@ use App\Entity\Review;
 use App\Message\Gas\CreateGasStationGooglePlace;
 use App\Repository\Gas\StationRepository;
 use App\Util\FileSystem;
-use App\Util\GooglePlace;
+use App\Util\Google\ApiPlace;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
@@ -18,13 +18,13 @@ class CreateGasStationGooglePlaceHandler implements MessageHandlerInterface
     /** @var EntityManagerInterface */
     private $em;
 
-    /** @var GooglePlace */
+    /** @var ApiPlace */
     private $googlePlace;
 
     /** @var StationRepository */
     private $stationRepository;
 
-    public function __construct(EntityManagerInterface $em, GooglePlace $googlePlace, StationRepository $stationRepository)
+    public function __construct(EntityManagerInterface $em, ApiPlace $googlePlace, StationRepository $stationRepository)
     {
         $this->em = $em;
         $this->googlePlace = $googlePlace;

@@ -13,6 +13,7 @@ use App\Repository\Gas\StationRepository;
 use App\Repository\Gas\TypeRepository;
 use App\Util\DotEnv;
 use App\Util\FileSystem;
+use App\Util\Logger\Command as LoggerCommand;
 use SimpleXMLElement;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -43,6 +44,9 @@ class GasPriceCommand extends Command
     /** @var MessageBusInterface */
     private $messageBus;
 
+    /** @var LoggerCommand */
+    private $command;
+
     /** @var DotEnv */
     private $dotEnv;
 
@@ -61,13 +65,17 @@ class GasPriceCommand extends Command
     /** @var array */
     private $types;
 
+    /** @var array */
+    private $logger;
+
     public function __construct(
         StationRepository $stationRepository,
         TypeRepository $typeRepository,
         ServiceRepository $serviceRepository,
         PriceRepository $priceRepository,
         DotEnv $dotEnv,
-        MessageBusInterface $messageBus
+        MessageBusInterface $messageBus,
+        LoggerCommand $command
     ) {
         parent::__construct(self::$defaultName);
         $this->stationRepository = $stationRepository;
@@ -76,11 +84,18 @@ class GasPriceCommand extends Command
         $this->priceRepository = $priceRepository;
         $this->dotEnv = $dotEnv;
         $this->messageBus = $messageBus;
+        $this->command = $command;
         $this->gasURL = $this->dotEnv->load("GAS_URL");
         $this->stations = [];
         $this->types = [];
         $this->services = [];
         $this->prices = [];
+        $this->logger = [
+            'stations' => 0,
+            'types' => 0,
+            'prices' => 0,
+            'services' => 0,
+        ];
     }
 
     protected function configure()
@@ -90,6 +105,8 @@ class GasPriceCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->command->start();
+
         $io = new SymfonyStyle($input, $output);
 
         $io->title('Creating Up To Date Prices ...');
@@ -123,6 +140,8 @@ class GasPriceCommand extends Command
 
         $io->writeln('');
 
+        $this->command->end(self::$defaultName, 'command', $this->logger);
+
         return Command::SUCCESS;
     }
 
@@ -140,6 +159,8 @@ class GasPriceCommand extends Command
             json_decode(str_replace("@", "", json_encode($element)), true)
         ));
 
+        $this->logger['stations']++;
+
         $this->createGasServices($stationId, $element);
 
         $this->prices[$stationId] = [];
@@ -150,6 +171,7 @@ class GasPriceCommand extends Command
     {
         foreach ((array)$element->services->service as $item) {
             $this->messageBus->dispatch(new CreateGasService($stationId, $item));
+            $this->logger['services']++;
             if (!isset($this->services[$item])) {
                 $this->services[$item] = $item;
             }
@@ -181,6 +203,7 @@ class GasPriceCommand extends Command
 
             if ((false === isset($this->prices[$stationId][$typeId])) || ($date > $this->prices[$stationId][$typeId])) {
                 $this->messageBus->dispatch(new CreateGasPrice($typeId, $stationId, $date, (string)$item->attributes()->valeur));
+                $this->logger['prices']++;
             }
         }
     }
@@ -188,6 +211,7 @@ class GasPriceCommand extends Command
     private function createGasTypes(SimpleXMLElement $element): void
     {
         $this->messageBus->dispatch(new CreateGasType((string)$element->attributes()->id, (string)$element->attributes()->nom));
+        $this->logger['types']++;
         $this->types[(string)$element->attributes()->id] = ['id' => (string)$element->attributes()->id];
     }
 
