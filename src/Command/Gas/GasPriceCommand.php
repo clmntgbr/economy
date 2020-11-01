@@ -139,6 +139,7 @@ class GasPriceCommand extends Command
         $progressBar->finish();
 
         $io->writeln('');
+        $io->writeln('');
 
         $this->command->end(self::$defaultName, 'command', $this->logger);
 

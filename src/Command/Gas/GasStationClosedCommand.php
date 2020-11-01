@@ -5,6 +5,7 @@ namespace App\Command\Gas;
 use App\Message\Gas\ClosedGasStation;
 use App\Repository\Gas\PriceRepository;
 use App\Repository\Gas\StationRepository;
+use App\Util\Logger\Command as LoggerCommand;
 use DateInterval;
 use DateTime;
 use Symfony\Component\Console\Command\Command;
@@ -29,19 +30,30 @@ class GasStationClosedCommand extends Command
     /** @var MessageBusInterface */
     private $messageBus;
 
+    /** @var LoggerCommand */
+    private $command;
+
     /** @var array */
     private $stations;
+
+    /** @var array */
+    private $logger;
 
     public function __construct(
         StationRepository $stationRepository,
         PriceRepository $priceRepository,
-        MessageBusInterface $messageBus
+        MessageBusInterface $messageBus,
+        LoggerCommand $command
     ) {
         parent::__construct(self::$defaultName);
         $this->stationRepository = $stationRepository;
         $this->priceRepository = $priceRepository;
         $this->messageBus = $messageBus;
+        $this->command = $command;
         $this->stations = [];
+        $this->logger = [
+            'stations' => 0,
+        ];
     }
 
     protected function configure()
@@ -51,6 +63,8 @@ class GasStationClosedCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->command->start();
+
         $io = new SymfonyStyle($input, $output);
 
         $io->title('Finding Gas Stations With Old Prices ...');
@@ -64,11 +78,15 @@ class GasStationClosedCommand extends Command
         foreach ($this->stations as $station) {
             if ($station['date'] < $date) {
                 $this->messageBus->dispatch(new ClosedGasStation($station['station_id'], $station['date']));
+                $this->logger['stations']++;
             }
             $progressBar->advance();
         }
 
         $progressBar->finish();
+
+        $io->writeln('');
+        $io->writeln('');
 
         $io->title('Finding Gas Stations With Zero Prices ...');
 
@@ -81,12 +99,15 @@ class GasStationClosedCommand extends Command
         foreach ($this->stations as $station) {
             if ("0" == $station['count'] && "0" == $station['is_closed']) {
                 $this->messageBus->dispatch(new ClosedGasStation($station['station_id'], $station['date']));
+                $this->logger['stations']++;
             }
             $progressBar->advance();
         }
         $progressBar->finish();
 
         $io->writeln('');
+
+        $this->command->end(self::$defaultName, 'command', $this->logger);
 
         return Command::SUCCESS;
     }

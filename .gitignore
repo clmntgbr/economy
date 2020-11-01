@@ -22,4 +22,3 @@ webpack.config.js
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
-/public/gas/
