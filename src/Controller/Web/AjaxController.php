@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Controller\Web;
+
+use App\Entity\Gas\Station;
+use App\Repository\Gas\PriceRepository;
+use App\Repository\Gas\StationRepository;
+use App\Repository\Gas\TypeRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
+
+class AjaxController extends AbstractController
+{
+    /** @var EntityManagerInterface */
+    private $entityManager;
+
+    /** @var StationRepository */
+    private $stationRepository;
+
+    /** @var TypeRepository */
+    private $typeRepository;
+
+    /** @var PriceRepository */
+    private $priceRepository;
+
+    /** @var RouterInterface */
+    private $router;
+
+    /** @var SerializerInterface */
+    private $serializer;
+
+    public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, StationRepository $stationRepository, SerializerInterface $serializer, TypeRepository $typeRepository, PriceRepository $priceRepository)
+    {
+        $this->entityManager = $entityManager;
+        $this->router = $router;
+        $this->stationRepository = $stationRepository;
+        $this->typeRepository = $typeRepository;
+        $this->priceRepository = $priceRepository;
+        $this->serializer = $serializer;
+    }
+
+    /**
+     * @Route("/ajax/gas/stations/map", name="ajax_gas_stations_map", methods={"GET"})
+     */
+    public function ajaxGasStationsAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse("This is not an AJAX request.", 400);
+        }
+
+        $longitude = $request->query->get('longitude');
+        $latitude = $request->query->get('latitude');
+        $radius = $request->query->get('radius');
+
+        if (is_null($longitude) || is_null($latitude) || is_null($radius)) {
+            return new JsonResponse("Parameters are missing.", 400);
+        }
+
+        return new JsonResponse($this->serializer->serialize($this->stationRepository->findGasStationMap($longitude, $latitude, $radius ), 'json', SerializationContext::create()->setGroups(["Ajax:GasStation"])), 200);
+    }
+
+    /**
+     * @Route("/ajax/gas/station", name="ajax_gas_station", methods={"GET"})
+     */
+    public function ajaxGasStationAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse("This is not an AJAX request.", 400);
+        }
+
+        $stationId = $request->query->get('station_id');
+
+        if (is_null($stationId)) {
+            return new JsonResponse("Parameters are missing.", 400);
+        }
+
+        $station = $this->stationRepository->findOneBy(['id' => $stationId]);
+
+        if (!($station instanceof Station)) {
+            return new JsonResponse(false, 400);
+        }
+
+        return new JsonResponse($this->createGasStationContent($station), 200);
+    }
+
+    private function createGasStationContent(Station $station): string
+    {
+        $stationRoute = $this->router->generate("gas_station_id", ['id' => $station->getId()]);
+
+        $types = $this->typeRepository->findBy([], ['id' => 'ASC']);
+
+        $content = sprintf("<a href='%s' style='font-family:Raleway, sans-serif;z-index:1;margin-bottom:5px;position: relative;width: auto;height: 200px;display: block;background-position: center;background-size: cover;background-image: url(%s);'>", $stationRoute, '/asset/img/gas/station/total.jpg');
+        if (!is_null($station->getPreview())) {
+            $content = sprintf("<a href='%s' style='font-family:Raleway, sans-serif;z-index:1;margin-bottom:5px;position: relative;width: auto;height: 200px;display: block;background-position: center;background-size: cover;background-image: url(%s%s);'>", $stationRoute, $station->getPreview()->getPath(), $station->getPreview()->getName());
+        }
+
+        $cssIsClosed = 'station_is_not_closed';
+        $htmlIsClosed = '';
+        if($station->getIsClosed()) {
+            $cssIsClosed = 'station_is_closed';
+            $htmlIsClosed = "data-tooltip='Cette Station Essence est fermée.' data-position='top center' data-inverted=''";
+        }
+
+        $content .= "<p $htmlIsClosed style='font-family:Raleway, sans-serif;position: absolute;bottom: 0;color: #fff;font-weight: bold;font-size: 15px;display: block;background-color: rgba(28,29,30,0.75);width: 100%;padding: 10px;'>" . $station->getName() . "&nbsp;&nbsp;<i class='far fa-clock $cssIsClosed'></i></p>";
+
+        if (!is_null($station->getGooglePlace()->getUrl())) {
+            $content .= sprintf('<a href="%s" target="_blank" data-tooltip="Open in Google Map" data-position="right center" data-inverted="" style="font-family:Raleway, sans-serif;z-index: 2;position: absolute;top: 10px;left: 10px;color: #fff;"><i class="fas fa-external-link-alt"></i></a>', $station->getGooglePlace()->getUrl());
+        }
+
+        $content .= '</a>';
+
+        $ids = implode(',', array_map(function ($entry) {
+            return $entry['id'];
+        }, $station->getLastPrices()));
+
+        $prices = $this->priceRepository->findGasPricesBeforeByStationId($station->getId(), $ids);
+
+        foreach ($types as $type) {
+            $typeRoute = $this->router->generate("gas_type_id", ['slug' => $type->getSlug()]);
+            foreach ($station->getLastPricesEntities() as $price) {
+                if ($price->getType()->getId() == $type->getId()) {
+                    if (isset($prices[$type->getId()])) {
+                        $priceColor = "orange";
+                        if ($prices[$type->getId()]['value'] > $price->getValue()) {
+                            $priceColor = "green";
+                        }
+                        if ($prices[$type->getId()]['value'] < $price->getValue()) {
+                            $priceColor = "red";
+                        }
+                    }
+                    $content .= sprintf("<p style='font-size: 13px;font-family:Raleway, sans-serif;margin: 0;padding: 2px 8px;color:$priceColor'><a class='%s %s' href='%s' style='color:black;font-family: Raleway-Bold, sans-serif!important;'>%s </a>: <span style='font-family:Raleway-Bold, sans-serif;'>%s €</span>&nbsp;&nbsp;(%s %s)</p>", $station->getId(), $type->getSlug(), $typeRoute, $type->getName(), $price->getValue(), 'Dernière MAJ le', ($price->getDate())->format('d/m/Y'));
+                }
+            }
+        }
+
+        $services = '';
+        foreach ($station->getServices() as $service) {
+            $services .= sprintf("%s, ", $service->getName());
+        }
+
+        $content .= sprintf("<p style='font-size: 12px;font-family:Raleway, sans-serif;margin:5px 0;font-weight: 500;padding: 2px 10px;'><i>%s</i></p>", $services);
+
+        if (!is_null($station->getGooglePlace()->getGoogleRating())) {
+            $entier = (int)$station->getGooglePlace()->getGoogleRating();
+            $content .= sprintf("<div style='font-family:Raleway, sans-serif;text-align: center;margin-top: 10px;'><span style='font-weight: 500;font-size: 15px;top: -2px;position: relative;'>%s</span>&nbsp;&nbsp;<div class='ui huge star rating'>", $station->getGooglePlace()->getGoogleRating());
+            for ($i=1;$i<=$entier;$i++) {
+                $content .= "<i class='icon active'></i>";
+            }
+            for ($i=$entier;$i<5;$i++) {
+                $content .= "<i class='icon'></i>";
+            }
+            $content .= "</div></div>";
+        }
+
+        $content .= sprintf("<a href='%s' style='font-family:Raleway-Bold, sans-serif;font-size: 15px;width: auto;border-radius: 0 0 8px 8px;text-align: center;display: block;margin-top: 10px;background-color: #4f9c49;color: #fff;padding: 13px 0;'>Accèder à la fiche</a>", $stationRoute, "%");
+
+        return $content;
+    }
+}

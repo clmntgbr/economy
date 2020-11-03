@@ -31,10 +31,7 @@ class CreateGasServiceHandler implements MessageHandlerInterface
     public function __invoke(CreateGasService $message)
     {
         if (!$this->em->isOpen()) {
-            $this->em = $this->em->create(
-                $this->em->getConnection(),
-                $this->em->getConfiguration()
-            );
+            $this->em = $this->em->create($this->em->getConnection(), $this->em->getConfiguration());
         }
 
         $service = $this->serviceRepository->findOneBy(['name' => $message->getName()]);

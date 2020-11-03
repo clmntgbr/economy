@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Gas Stations
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"/>
+{% endblock %}
+
+{% block body %}
+    <div id="map" class="gas_stations"></div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script>
+        var lat, lng
+        var map, infoWindow, markers = [], markersInArray = [], stations, object = {}, low_prices = {}
+        var marker = 'marker'
+
+        map = L.map('map').setView([48.855680, 2.347045], 12)
+
+        map.scrollWheelZoom.disable()
+
+        L.control.scale().addTo(map);
+
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            maxZoom: 18,
+            id: 'mapbox/outdoors-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: '{{ KEY }}'
+        }).addTo(map)
+
+        var group = L.featureGroup().addTo(map)
+
+        var normal = L.icon({
+            iconUrl: '{{ asset('asset/img/gas/marker/normal.png') }}',
+        })
+
+        var user = L.icon({
+            iconUrl: '{{ asset('asset/img/gas/marker/user.png') }}',
+        })
+
+        var special = L.icon({
+            iconUrl: '{{ asset('asset/img/gas/marker/special.png') }}',
+        })
+
+        var low = L.icon({
+            iconUrl: '{{ asset('asset/img/gas/marker/low.png') }}',
+        })
+
+        map.locate({setView: true, maxZoom: 13})
+
+        map.on('locationfound', function (e) {
+            var radius = e.accuracy;
+            L.marker(e.latlng).addTo(map).on('click', function(e) {
+                map.setView([parseFloat(e.latlng.lat), parseFloat(e.latlng.lng)])
+            })
+            L.circle(e.latlng, radius).addTo(map)
+
+        })
+
+        map.on('locationerror', function (e) {
+            alert(e.message);
+        })
+
+        map.on('moveend', function (e) {
+            const { lat, lng } = e.target.getCenter()
+
+            var mapBoundNorthEast = map.getBounds().getNorthEast()
+            mapBoundNorthEast.lng = lng
+            var mapDistance = mapBoundNorthEast.distanceTo(map.getCenter())
+
+            getGasStations(lat, lng, mapDistance)
+        });
+
+        map.on('zoomend', function (e) {
+            const { lat, lng } = e.target.getCenter()
+
+            var mapBoundNorthEast = map.getBounds().getNorthEast()
+            mapBoundNorthEast.lng = lng
+            var mapDistance = mapBoundNorthEast.distanceTo(map.getCenter())
+
+            getGasStations(lat, lng, mapDistance)
+        });
+
+        function getGasStations(latitude, longitude, radius) {
+
+            $.get({
+                url: '{{ path('ajax_gas_stations_map') }}',
+                type: 'GET',
+                async: true,
+                data: {'latitude': latitude, 'longitude': longitude, 'radius': radius},
+                success: function (elements, statut) {
+                    group.clearLayers();
+                    const objects = JSON.parse(elements)
+                    $.each(objects, function(index, element) {
+                        object[marker + element.id] = L.marker([parseFloat(element.address.latitude), parseFloat(element.address.longitude)], {icon: normal}).addTo(group).on('click', function(e) {
+                            map.setView([parseFloat(element.address.latitude), parseFloat(element.address.longitude)])
+                            $.get({
+                                url: '{{ path('ajax_gas_station') }}',
+                                type: 'GET',
+                                async: true,
+                                data: {'station_id': element.id},
+                                success: function (element, statut) {
+                                    $('.gas_station_popup').remove()
+                                    var content = "<div class='gas_station_popup'>" + element + "</div>"
+                                    console.log(content)
+                                    $('#gas_stations').append(content)
+                                }
+                            })
+                        })
+                    })
+                }
+            })
+        }
+
+    </script>
+{% endblock %}

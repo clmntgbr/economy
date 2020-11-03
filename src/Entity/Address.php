@@ -26,6 +26,7 @@ class Address
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address"})
      */
     private $vicinity;
 
@@ -35,6 +36,7 @@ class Address
      * @ORM\Column(type="string")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address"})
      */
     private $street;
 
@@ -44,6 +46,7 @@ class Address
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address"})
      */
     private $number;
 
@@ -53,6 +56,7 @@ class Address
      * @ORM\Column(type="string")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address"})
      */
     private $city;
 
@@ -62,6 +66,7 @@ class Address
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address"})
      */
     private $region;
 
@@ -71,6 +76,7 @@ class Address
      * @ORM\Column(type="string")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address"})
      */
     private $postalCode;
 
@@ -80,6 +86,7 @@ class Address
      * @ORM\Column(type="string")
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address"})
      */
     private $country;
 
@@ -89,6 +96,7 @@ class Address
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address", "Ajax:GasStation"})
      */
     private $longitude;
 
@@ -98,6 +106,7 @@ class Address
      * @ORM\Column(type="string", nullable=true)
      *
      * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Address", "Ajax:GasStation"})
      */
     private $latitude;
 

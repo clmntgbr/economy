@@ -26,10 +26,7 @@ class ClosedGasStationHandler implements MessageHandlerInterface
     public function __invoke(ClosedGasStation $message)
     {
         if (!$this->em->isOpen()) {
-            $this->em = $this->em->create(
-                $this->em->getConnection(),
-                $this->em->getConfiguration()
-            );
+            $this->em = $this->em->create($this->em->getConnection(), $this->em->getConfiguration());
         }
 
         $station = $this->stationRepository->findOneBy(['id' => $message->getStationId()]);

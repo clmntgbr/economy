@@ -66,7 +66,7 @@ class ApiPlace
             return $response['result'];
         }
 
-        return false;
+        return ['failed' => false, 'response' => $response];
     }
 
     public function getDistanceBetweenTwoCoordinates(string $longitude, string $latitude, string $nearByLongitude, string $nearByLatitude)

@@ -55,14 +55,14 @@ class StationRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findGasStationMap(float $longitude, float $latitude, float $radius)
+    public function findGasStationMap(float $longitude, float $latitude, float $radius, int $max = 500)
     {
         $query = "SELECT s.id as station_id, (SQRT(POW(69.1 * (a.latitude - $latitude), 2) + POW(69.1 * ($longitude - a.longitude) * COS(a.latitude / 57.3), 2))*1000) as distance
                   FROM address a
                   INNER JOIN gas_station s ON s.address_id = a.id
-                  WHERE a.longitude IS NOT NULL AND a.latitude IS NOT NULL
+                  WHERE a.longitude IS NOT NULL AND a.latitude IS NOT NULL AND s.is_closed IS FALSE
                   HAVING `distance` < $radius
-                  ORDER BY `distance` ASC LIMIT 500;";
+                  ORDER BY `distance` ASC LIMIT $max;";
 
         $statement = $this->getEntityManager()->getConnection()->prepare($query);
         $statement->execute();

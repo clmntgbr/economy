@@ -32,10 +32,7 @@ class CreateGasPriceHandler implements MessageHandlerInterface
     public function __invoke(CreateGasPrice $message)
     {
         if (!$this->em->isOpen()) {
-            $this->em = $this->em->create(
-                $this->em->getConnection(),
-                $this->em->getConfiguration()
-            );
+            $this->em = $this->em->create($this->em->getConnection(), $this->em->getConfiguration());
         }
 
         $type = $this->typeRepository->findOneBy(['id' => $message->getTypeId()]);

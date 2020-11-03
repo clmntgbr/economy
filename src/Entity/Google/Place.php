@@ -154,6 +154,13 @@ class Place
      */
     private $nearbysearch;
 
+    /**
+     * @var array
+     *
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $details;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -311,6 +318,18 @@ class Place
     public function setNearbysearch(?array $nearbysearch): self
     {
         $this->nearbysearch = $nearbysearch;
+
+        return $this;
+    }
+
+    public function getDetails(): ?array
+    {
+        return $this->details;
+    }
+
+    public function setDetails(?array $details): self
+    {
+        $this->details = $details;
 
         return $this;
     }

@@ -1,15 +1,27 @@
 framework:
     messenger:
+        failure_transport: failed
+
         transports:
             async_priority_high:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
                     queue_name: async_high
+                retry_strategy:
+                    max_retries: 30
+                    delay: 1000
+                    multiplier: 2
+                    max_delay: 0
 
             async_priority_low:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
                     queue_name: async_low
+                retry_strategy:
+                    max_retries: 30
+                    delay: 1000
+                    multiplier: 2
+                    max_delay: 0
 
             failed: 'doctrine://default?queue_name=failed'
 

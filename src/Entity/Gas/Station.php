@@ -34,7 +34,7 @@ class Station
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation", "User", "User:LikeGasStation"})
+     * @Serializer\Groups(groups={"GasStation", "User", "User:LikeGasStation", "Ajax:GasStation"})
      */
     private $id;
 
@@ -152,7 +152,7 @@ class Station
      * @ORM\JoinColumn(name="address_id", referencedColumnName="id")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation"})
+     * @Serializer\Groups(groups={"GasStation", "Ajax:GasStation"})
      */
     private $address;
 
@@ -599,5 +599,103 @@ class Station
     public function setLastPricesEntities(?array $lastPricesEntities): void
     {
         $this->lastPricesEntities = $lastPricesEntities;
+    }
+
+    public function setNearbysearchForGooglePlace(?array $nearbysearch): self
+    {
+        $this->googlePlace->setNearbysearch($nearbysearch);
+
+        return $this;
+    }
+
+    public function setDetailsForGooglePlace(?array $details): self
+    {
+        $this->googlePlace->setDetails($details);
+
+        return $this;
+    }
+
+    public function setGoogleIdForGooglePlace(?string $googleId): self
+    {
+        $this->googlePlace->setGoogleId($googleId);
+
+        return $this;
+    }
+
+    public function setPlaceIdForGooglePlace(?string $placeId): self
+    {
+        $this->googlePlace->setPlaceId($placeId);
+
+        return $this;
+    }
+
+    public function setBusinessStatusForGooglePlace(?string $businessStatus): self
+    {
+        $this->googlePlace->setBusinessStatus($businessStatus);
+
+        return $this;
+    }
+
+    public function setIconForGooglePlace(?string $icon): self
+    {
+        $this->googlePlace->setIcon($icon);
+
+        return $this;
+    }
+
+    public function setPhoneNumberForGooglePlace(?string $phoneNumber): self
+    {
+        $this->googlePlace->setPhoneNumber($phoneNumber);
+
+        return $this;
+    }
+
+    public function setCompoundCodeForGooglePlace(?string $compoundCode): self
+    {
+        $this->googlePlace->setCompoundCode($compoundCode);
+
+        return $this;
+    }
+
+    public function setGlobalCodeForGooglePlace(?string $globalCode): self
+    {
+        $this->googlePlace->setGlobalCode($globalCode);
+
+        return $this;
+    }
+
+    public function setGoogleRatingForGooglePlace(?string $googleRating): self
+    {
+        $this->googlePlace->setGoogleRating($googleRating);
+
+        return $this;
+    }
+
+    public function setReferenceForGooglePlace(?string $reference): self
+    {
+        $this->googlePlace->setReference($reference);
+
+        return $this;
+    }
+
+    public function setUserRatingsTotalForGooglePlace(?string $userRatingsTotal): self
+    {
+        $this->googlePlace->setUserRatingsTotal($userRatingsTotal);
+
+        return $this;
+    }
+
+    public function setUrlForGooglePlace(?string $url): self
+    {
+        $this->googlePlace->setUrl($url);
+
+        return $this;
+    }
+
+    public function setWebsiteForGooglePlace(?string $website): self
+    {
+        $this->googlePlace->setWebsite($website);
+
+        return $this;
     }
 }

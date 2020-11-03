@@ -59,7 +59,7 @@ class GasStationController extends AbstractFOSRestController
      * @Rest\RequestParam(name="longitude", requirements="\d+", strict=true, map=false, nullable=false)
      * @Rest\RequestParam(name="latitude", requirements="\d+", strict=true, map=false, nullable=false)
      * @Rest\RequestParam(name="radius", requirements="\d+", strict=true, map=false, nullable=false)
-     * @Rest\View(serializerGroups={"GasStation", "GasStation:Price", "GasStation:Type", "GasStation:Service", "GooglePlace", "Review:GasStation"})
+     * @Rest\View(serializerGroups={"GasStation", "GasStation:Price", "GasStation:Type", "GasStation:Service", "GooglePlace", "Review:GasStation", "Address"})
      */
     public function getGasStationsMap(Request $request, float $longitude, float $latitude, float $radius = 500)
     {

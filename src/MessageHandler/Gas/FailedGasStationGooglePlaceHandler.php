@@ -25,10 +25,7 @@ class FailedGasStationGooglePlaceHandler implements MessageHandlerInterface
     public function __invoke(FailedGasStationGooglePlace $message)
     {
         if (!$this->em->isOpen()) {
-            $this->em = $this->em->create(
-                $this->em->getConnection(),
-                $this->em->getConfiguration()
-            );
+            $this->em = $this->em->create($this->em->getConnection(), $this->em->getConfiguration());
         }
 
         $station = $this->stationRepository->findOneBy(['id' => $message->getStationId()]);
@@ -39,15 +36,10 @@ class FailedGasStationGooglePlaceHandler implements MessageHandlerInterface
 
         $station
             ->setIsGoogled($message->isGoogled())
-            ->setIsForced($message->isForced());
-
-        $place = $station->getGooglePlace();
-
-        $place
-            ->setNearbysearch($message->getNearBy());
+            ->setIsForced($message->isForced())
+            ->setNearbysearchForGooglePlace($message->getNearBy());
 
         $this->em->persist($station);
-        $this->em->persist($place);
         $this->em->flush();
     }
 }

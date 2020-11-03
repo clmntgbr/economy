@@ -3,7 +3,6 @@
 namespace App\Listener\Gas;
 
 use App\Entity\Gas\Station;
-use App\Entity\User\User;
 use App\Repository\Gas\PriceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -30,7 +29,8 @@ class StationListener
     public function postLoad(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        if ($entity instanceof Station && $this->tokenStorage->getToken() && $this->tokenStorage->getToken()->getUser() instanceof User) {
+        if ($entity instanceof Station) {
+//        if ($entity instanceof Station && $this->tokenStorage->getToken() && $this->tokenStorage->getToken()->getUser() instanceof User) {
 
             $ids = implode(',', array_map(function ($entry) {
                 return $entry['id'];

@@ -20,10 +20,7 @@ class CreateGasTypeHandler implements MessageHandlerInterface
     public function __invoke(CreateGasType $message)
     {
         if (!$this->em->isOpen()) {
-            $this->em = $this->em->create(
-                $this->em->getConnection(),
-                $this->em->getConfiguration()
-            );
+            $this->em = $this->em->create($this->em->getConnection(), $this->em->getConfiguration());
         }
 
         $type = new Type($message->getId(), $message->getName());
