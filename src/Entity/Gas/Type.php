@@ -26,7 +26,7 @@ class Type
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation:Type"})
+     * @Serializer\Groups(groups={"GasStation:Type", "Ajax:GasStation"})
      */
     private $id;
 

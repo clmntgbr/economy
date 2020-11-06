@@ -41,6 +41,10 @@ class PriceRepository extends ServiceEntityRepository
 
     public function findGasPricesBeforeByStationId($stationId, $ids)
     {
+        if (is_null($ids) || $ids == "") {
+            return [];
+        }
+
         $sql = sprintf("SELECT MAX(id) as id
                 FROM gas_price
                 WHERE station_id = $stationId AND id not in (%s)
@@ -73,5 +77,26 @@ class PriceRepository extends ServiceEntityRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    public function findYearPrices(int $stationId, string $year)
+    {
+        $where = sprintf("(p.date >= '%s' && p.date <= '%s')", sprintf('%s-01-01 00:00:00', $year), sprintf('%s-12-31 23:59:59', $year));
+        if ("LAST_SIX_MONTH" == $year) {
+            $date = (new \DateTime('now'))->sub(new \DateInterval('P6M'))->format('Y-m-d 00:00:00');
+            $where = sprintf("p.date >= '%s'", $date);
+        }
+
+        $sql = sprintf("SELECT p.station_id, p.date, p.type_id, p.value, p.id, (p.date_timestamp*1000) as timestamp, t.name, t.slug
+                                FROM gas_price p 
+                                INNER JOIN gas_type t ON p.type_id = t.id
+                                WHERE p.station_id = '%s' AND $where
+                                ORDER BY p.type_id, p.date ASC;", $stationId);
+
+        $getConnection = $this->getEntityManager()->getConnection();
+        $statement = $getConnection->prepare($sql);
+        $statement->execute();
+
+        return $statement->fetchAll();
     }
 }

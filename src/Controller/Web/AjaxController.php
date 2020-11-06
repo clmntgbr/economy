@@ -6,6 +6,7 @@ use App\Entity\Gas\Station;
 use App\Repository\Gas\PriceRepository;
 use App\Repository\Gas\StationRepository;
 use App\Repository\Gas\TypeRepository;
+use App\Util\Gas\StationUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -35,7 +36,10 @@ class AjaxController extends AbstractController
     /** @var SerializerInterface */
     private $serializer;
 
-    public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, StationRepository $stationRepository, SerializerInterface $serializer, TypeRepository $typeRepository, PriceRepository $priceRepository)
+    /** @var StationUtil */
+    private $stationUtil;
+
+    public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, StationRepository $stationRepository, SerializerInterface $serializer, TypeRepository $typeRepository, PriceRepository $priceRepository, StationUtil $stationUtil)
     {
         $this->entityManager = $entityManager;
         $this->router = $router;
@@ -43,12 +47,13 @@ class AjaxController extends AbstractController
         $this->typeRepository = $typeRepository;
         $this->priceRepository = $priceRepository;
         $this->serializer = $serializer;
+        $this->stationUtil = $stationUtil;
     }
 
     /**
-     * @Route("/ajax/gas/stations/map", name="ajax_gas_stations_map", methods={"GET"})
+     * @Route("/ajax/gas_stations/map", name="ajax_gas_stations_map", methods={"GET"})
      */
-    public function ajaxGasStationsAction(Request $request)
+    public function ajaxGasStationsMapAction(Request $request)
     {
         if (!$request->isXmlHttpRequest()) {
             return new JsonResponse("This is not an AJAX request.", 400);
@@ -66,9 +71,9 @@ class AjaxController extends AbstractController
     }
 
     /**
-     * @Route("/ajax/gas/station", name="ajax_gas_station", methods={"GET"})
+     * @Route("/ajax/gas_station/id", name="ajax_gas_station_id", methods={"GET"})
      */
-    public function ajaxGasStationAction(Request $request)
+    public function ajaxGasStationIdAction(Request $request)
     {
         if (!$request->isXmlHttpRequest()) {
             return new JsonResponse("This is not an AJAX request.", 400);
@@ -89,7 +94,37 @@ class AjaxController extends AbstractController
         return new JsonResponse($this->createGasStationContent($station), 200);
     }
 
-    private function createGasStationContent(Station $station): string
+    /**
+     * @Route("/ajax/gas_prices", name="ajax_gas_prices_year", methods={"GET"})
+     */
+    public function ajaxGasSPricesByYearAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse("This is not an AJAX request.", 400);
+        }
+
+        $stationId = $request->query->get('station_id');
+
+        if (is_null($stationId)) {
+            return new JsonResponse("Parameter `station_id` are missing.", 400);
+        }
+
+        $year = $request->query->get('year');
+
+        if (is_null($year)) {
+            return new JsonResponse("Parameters `year` are missing.", 400);
+        }
+
+        $station = $this->stationRepository->findOneBy(['id' => $stationId]);
+
+        if (!($station instanceof Station)) {
+            return new JsonResponse(false, 400);
+        }
+
+        return new JsonResponse($this->stationUtil->getYearPrices($station, $year), 200);
+    }
+
+    private function createGasStationContent(Station $station): array
     {
         $stationRoute = $this->router->generate("gas_station_id", ['id' => $station->getId()]);
 
@@ -134,7 +169,7 @@ class AjaxController extends AbstractController
                             $priceColor = "red";
                         }
                     }
-                    $content .= sprintf("<p style='font-size: 13px;font-family:Raleway, sans-serif;margin: 0;padding: 2px 8px;color:$priceColor'><a class='%s %s' href='%s' style='color:black;font-family: Raleway-Bold, sans-serif!important;'>%s </a>: <span style='font-family:Raleway-Bold, sans-serif;'>%s €</span>&nbsp;&nbsp;(%s %s)</p>", $station->getId(), $type->getSlug(), $typeRoute, $type->getName(), $price->getValue(), 'Dernière MAJ le', ($price->getDate())->format('d/m/Y'));
+                    $content .= sprintf("<p style='font-size: 13px;font-family:Raleway, sans-serif;margin: 0;padding: 2px 8px;color:$priceColor'><a class='%s %s' href='%s' style='color:black;font-family: Raleway-Bold, sans-serif!important;'>%s </a>: <span style='font-family:Raleway-Bold, sans-serif;'>%s €</span>&nbsp;&nbsp;(%s %s)</p>", $station->getId(), $type->getId(), $typeRoute, $type->getName(), $price->getValue(), 'Dernière MAJ le', ($price->getDate())->format('d/m/Y'));
                 }
             }
         }
@@ -144,22 +179,16 @@ class AjaxController extends AbstractController
             $services .= sprintf("%s, ", $service->getName());
         }
 
-        $content .= sprintf("<p style='font-size: 12px;font-family:Raleway, sans-serif;margin:5px 0;font-weight: 500;padding: 2px 10px;'><i>%s</i></p>", $services);
+        if ('' !== $services) {
+            $content .= sprintf("<p style='font-size: 12px;font-family:Raleway, sans-serif;margin:5px 0;font-weight: 500;padding: 2px 10px;'><i>%s</i></p>", $services);
+        }
 
         if (!is_null($station->getGooglePlace()->getGoogleRating())) {
-            $entier = (int)$station->getGooglePlace()->getGoogleRating();
-            $content .= sprintf("<div style='font-family:Raleway, sans-serif;text-align: center;margin-top: 10px;'><span style='font-weight: 500;font-size: 15px;top: -2px;position: relative;'>%s</span>&nbsp;&nbsp;<div class='ui huge star rating'>", $station->getGooglePlace()->getGoogleRating());
-            for ($i=1;$i<=$entier;$i++) {
-                $content .= "<i class='icon active'></i>";
-            }
-            for ($i=$entier;$i<5;$i++) {
-                $content .= "<i class='icon'></i>";
-            }
-            $content .= "</div></div>";
+            $content .= $this->stationUtil->getGoogleRating($station->getGooglePlace()->getGoogleRating());
         }
 
         $content .= sprintf("<a href='%s' style='font-family:Raleway-Bold, sans-serif;font-size: 15px;width: auto;border-radius: 0 0 8px 8px;text-align: center;display: block;margin-top: 10px;background-color: #4f9c49;color: #fff;padding: 13px 0;'>Accèder à la fiche</a>", $stationRoute, "%");
 
-        return $content;
+        return ['content' => $content, 'latitude' => $station->getAddress()->getLatitude(), 'longitude' => $station->getAddress()->getLongitude()];
     }
 }

@@ -5,11 +5,258 @@
 {% endblock %}
 
 {% block stylesheets %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"/>
 {% endblock %}
 
 {% block body %}
+    <header>
+        <img src="{{ asset(station.getPreviewFile) }}" alt="{{ station.name }}"/>
+        <section class="presentation container">
+            <h1>{{ station.name }}</h1><br>
+            <h2><a {% if station.getGooglePlace.url %}href="{{ station.getGooglePlace.url }}" target="_blank" data-tooltip="Open in Google Map" data-position="bottom center" data-inverted=""{% endif %}>{{ station.address.vicinity }}</a></h2>
+        </section>
+    </header>
+
+    <section class="information container">
+        <div class="row last_prices">
+            {% for type in gas_types %}
+                <div class="col-lg-4 col-sm-6 col-xs-12 types">
+                    {% if last_prices[type.id] is defined %}
+                        {% set price = last_prices[type.id] %}
+                        <div class="item {{ type.slug }} {{ price.color }}">
+                            <a href="{{ path('gas_type_id', {'slug' : type.slug}) }}" class="name">{{ type.name }}</a>
+                            <p class="price">{{ price.value }}</p>
+                            <p class="date">Dernière MAJ le {{ price.date|date('d/m/Y') }}</p>
+                        </div>
+                    {% else %}
+                        <div class="item {{ type.slug }}">
+                            <a href="{{ path('gas_type_id', {'slug' : type.slug}) }}" class="name">{{ type.name }}</a>
+                            <p class="price small">NaN</p>
+                            <p class="date">Pas de MAJ</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="map">
+        <div id="map" class="gas_station"></div>
+    </section>
+
+    <section class="prices container">
+        <div class="row gas_prices">
+            <div class="ui form" id="gas_year">
+                <div class="field">
+                    <select id="gas_years" class="ui search dropdown">
+                        {% for year in gas_years %}
+                            {% if year == "LAST_SIX_MONTH" %}
+                                <option value="{{ year }}" selected>Les 6 Derniers Mois</option>
+                            {% else %}
+                                <option value="{{ year }}">{{ year }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            {% for key, prices in last_six_month_prices %}
+                <div class="col-lg-12 chart_prices" id="{{ key }}_chart"></div>
+            {% endfor %}
+            <div class="col-lg-12 chart_prices_none">
+                <p>There is no datas for this year.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="gas_station_comment">
+        <div class="ui comments">
+            {% for review in station.reviews %}
+                <div class="comment">
+                    <a class="avatar">
+                        <img src="{{ review.profilePhotoUrl }}">
+                    </a>
+                    <div class="content">
+                        <a class="author" href="{{ review.authorURL }}" target="_blank">{{ review.authorName|title }}</a>
+                        <div class="metadata">
+                            <span class="date">{{ review.date|date('d/m/Y à H:i:s') }} - {{ review.relativeTimeDescription }}</span>
+                        </div>
+                        <div class="text">
+                            {{ review.text }}
+                        </div>
+                        <div class="actions">
+                            {{ review.rating }}/5
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
 {% endblock %}
 
 {% block javascripts %}
+    <script type="application/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+
+
+    <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script>
+        map = L.map('map').setView([48.855680, 2.347045], 12)
+
+        map.scrollWheelZoom.disable()
+
+        L.control.scale().addTo(map);
+
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            maxZoom: 18,
+            id: 'mapbox/outdoors-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: '{{ KEY }}'
+        }).addTo(map)
+
+        var group = L.featureGroup().addTo(map)
+
+        var normal = L.icon({
+            iconUrl: '{{ asset('asset/img/gas/marker/normal.png') }}',
+        })
+
+        var user = L.icon({
+            iconUrl: '{{ asset('asset/img/gas/marker/user.png') }}',
+        })
+
+        map.locate({setView: true, maxZoom: 13})
+
+        map.on('locationfound', function (e) {
+            var radius = e.accuracy;
+            L.circle(e.latlng, radius).addTo(map)
+            L.marker(e.latlng).addTo(map)
+            L.marker([parseFloat({{ station.address.latitude }}), parseFloat({{ station.address.longitude }})], {icon: normal}).addTo(group)
+            map.setView([parseFloat({{ station.address.latitude }}), parseFloat({{ station.address.longitude }})])
+        })
+
+
+        $('#gas_year .ui.dropdown').dropdown({
+            action: 'activate',
+            onChange: function (value) {
+                $.get({
+                    url: '{{ path('ajax_gas_prices_year') }}',
+                    type: 'GET',
+                    async: true,
+                    data: {'year': value, 'station_id': '{{ station.id }}'},
+                    success: function (elements) {
+                        if (elements.length === 0) {
+                            var height = $('.chart_prices').height()
+                            $('.gas_prices .chart_prices').css('display', 'none')
+                            $('.gas_prices .chart_prices_none').css('display', 'block')
+                            return false
+                        }
+
+                        $('.gas_prices .chart_prices').css('display', 'block')
+                        $('.gas_prices .chart_prices_none').css('display', 'none')
+
+                        $.each(elements, function (index, element) {
+                            loadCharts(element)
+                        })
+                    }
+                })
+            },
+        })
+
+        function loadCharts(element) {
+            var year = $('#gas_year .ui.dropdown').dropdown('get value')
+            if (year === "LAST_SIX_MONTH") {
+                year = "les six derniers mois"
+            }
+
+            var data = []
+            Highcharts.setOptions({
+                lang: {
+                    shortMonths: [
+                        'Janvier', 'Février', 'Mars', 'Avril',
+                        'Mai', 'Juin', 'Juillet', 'Août',
+                        'Septembre', 'Octobre', 'Novembre', 'Décembre'
+                    ],
+                }
+            })
+            $.each(element.price, function (index, price) {
+                data.push([parseFloat(price.timestamp), parseFloat(price.value)])
+            })
+
+            Highcharts.chart(element.slug + '_chart', {
+                chart: {
+                    borderWidth: 1,
+                    spacingBottom: 45,
+                    spacingTop: 25,
+                    spacingLeft: 10,
+                    spacingRight: 10,
+                    borderColor: 'rgb(230, 230, 230)',
+                    zoomType: 'x',
+                    style: {
+                        fontFamily: 'Raleway',
+                    }
+                },
+                title: {
+                    text: '<p style="font-family: Raleway-Bold, sans-serif;">Prix du ' + element.type_name + ' pour ' + year + '</p>',
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: element.type_name + ' Price'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    area: {
+                        marker: {
+                            radius: 2
+                        },
+                        lineWidth: 1,
+                        states: {
+                            hover: {
+                                lineWidth: 2
+                            }
+                        },
+                        threshold: null
+                    },
+                    series: {
+                        allowPointSelect: true
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                tooltip: {
+                    xDateFormat: '%d/%m/%Y',
+                    pointFormat: element.type_name + ' : <b>{point.y} €</b>',
+                    shared: true
+                },
+                series: [{
+                    type: 'area',
+                    fillOpacity: 0.5,
+                    color: 'rgba(67,160,71,0.68)',
+                    data: data
+                }]
+            })
+        }
+
+        $.get({
+            url: '{{ path('ajax_gas_prices_year') }}',
+            type: 'GET',
+            async: true,
+            data: {'year': 'LAST_SIX_MONTH', 'station_id': '{{ station.id }}'},
+            success: function (elements) {
+                $.each(elements, function (index, element) {
+                    loadCharts(element)
+                })
+            }
+        })
+
+    </script>
 {% endblock %}
 

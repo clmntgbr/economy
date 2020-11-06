@@ -214,7 +214,7 @@ class Station
      * @var Price[]|null
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation", "GasStation:Price"})
+     * @Serializer\Groups(groups={"GasStation", "GasStation:Price", "Ajax:GasStation"})
      * @Serializer\SerializedName("prices")
      */
     private $lastPricesEntities;
@@ -697,5 +697,18 @@ class Station
         $this->googlePlace->setWebsite($website);
 
         return $this;
+    }
+
+    public function getPreviewFile()
+    {
+        if (is_null($this->preview)) {
+            return 'asset/img/gas/station/total.jpg';
+        }
+
+        if($this->preview->getPath() === null) {
+            return $this->name;
+        }
+
+        return sprintf('%s%s', $this->preview->getPath(), $this->preview->getName());
     }
 }

@@ -1,7 +1,8 @@
 {
-  "build/app.css": "/build/app.1f20efdd.css",
-  "build/app.js": "/build/app.10eceb02.js",
-  "build/runtime.js": "/build/runtime.d94b3b43.js",
+  "build/app.css": "/build/app.css",
+  "build/app.js": "/build/app.js",
+  "build/runtime.js": "/build/runtime.js",
   "build/fonts/Raleway-ExtraBold.ttf": "/build/fonts/Raleway-ExtraBold.3ebdff41.ttf",
-  "build/fonts/Raleway-Light.ttf": "/build/fonts/Raleway-Light.f00278d7.ttf"
+  "build/fonts/Raleway-Light.ttf": "/build/fonts/Raleway-Light.f00278d7.ttf",
+  "build/images/close.png": "/build/images/close.a0f35e85.png"
 }

@@ -68,6 +68,9 @@ class StationRepository extends ServiceEntityRepository
         $statement->execute();
         $stationIds = $statement->fetchAllAssociative();
 
+//        dump($stationIds);
+//        die;
+
         $ids = implode(',', array_map(function ($entry) {
             return $entry['station_id'];
         }, $stationIds));

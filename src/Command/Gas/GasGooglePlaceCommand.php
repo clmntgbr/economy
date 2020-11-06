@@ -68,7 +68,12 @@ class GasGooglePlaceCommand extends Command
         $progressBar = new ProgressBar($output, count($this->stations));
 
         foreach ($this->stations as $value) {
-            dump("====================");
+
+            if (strpos($value['id'], '75') !== 0 && strpos($value['id'], '94') !== 0) {
+                $progressBar->advance();
+                continue;
+            }
+
             $interests = [];
             $nearBy = $this->apiPlace->nearbysearch($value['longitude'], $value['latitude'], "gas_station");
 
@@ -79,13 +84,10 @@ class GasGooglePlaceCommand extends Command
 
             foreach ($nearBy as $result) {
                 $distance = $this->apiPlace->getDistanceBetweenTwoCoordinates($value['longitude'], $value['latitude'], $result['geometry']['location']['lng'], $result['geometry']['location']['lat']);
-                dump($distance);
                 if (750 >= $distance && !(isset($this->placeIds[$result['place_id']]))) {
                     $interests[(string)$distance] = $result;
                 }
             }
-
-            dump($interests);
 
             if (0 > count($interests)) {
                 $this->messageBus->dispatch(new FailedGasStationGooglePlace($value['id'], true, false, $nearBy));
@@ -99,7 +101,6 @@ class GasGooglePlaceCommand extends Command
 
             foreach ($interests as $distance => $interest) {
                 similar_text($this->slugify->slugify(sprintf("%s, %s", $value['street'], $value['city'])), $this->slugify->slugify($interest['vicinity']), $percent);
-                dump($percent);
                 if (85 <= $percent) {
                     $similarText[(string)$percent] = ['details' => $interest, 'distance' => $distance];
                 }

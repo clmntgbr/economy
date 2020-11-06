@@ -24,7 +24,7 @@ class Price
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation:Price"})
+     * @Serializer\Groups(groups={"GasStation:Price", "Ajax:GasStation"})
      */
     private $id;
 
@@ -34,7 +34,7 @@ class Price
      * @ORM\ManyToOne(targetEntity="App\Entity\Gas\Type", inversedBy="prices", fetch="EXTRA_LAZY", cascade={"persist"})
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation:Price"})
+     * @Serializer\Groups(groups={"GasStation:Price", "Ajax:GasStation"})
      */
     public $type;
 
@@ -51,7 +51,7 @@ class Price
      * @ORM\Column(type="float")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation:Price"})
+     * @Serializer\Groups(groups={"GasStation:Price", "Ajax:GasStation"})
      */
     private $value;
 
@@ -74,7 +74,7 @@ class Price
      * @Serializer\Expose()
      * @Serializer\Groups(groups={"GasStation:Price"})
      */
-    private $dateTimestanp;
+    private $dateTimestamp;
 
     public function __construct(Type $type, Station $station, string $value, string $date)
     {
@@ -82,7 +82,7 @@ class Price
         $this->station = $station;
         $this->value = (float)$value;
         $this->date = DateTime::createFromFormat('Y-m-d H:i:s', str_replace("T", " ", substr($date, 0, 19)));
-        $this->dateTimestanp = $this->date->getTimestamp();
+        $this->dateTimestamp = $this->date->getTimestamp();
     }
 
     public function getId(): ?int
@@ -114,14 +114,14 @@ class Price
         return $this;
     }
 
-    public function getDateTimestanp(): ?int
+    public function getDateTimestamp(): ?int
     {
-        return $this->dateTimestanp;
+        return $this->dateTimestamp;
     }
 
-    public function setDateTimestanp(int $dateTimestanp): self
+    public function setDateTimestamp(int $dateTimestamp): self
     {
-        $this->dateTimestanp = $dateTimestanp;
+        $this->dateTimestamp = $dateTimestamp;
 
         return $this;
     }

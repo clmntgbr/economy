@@ -88,6 +88,7 @@ class FileSystem
     }
 
     static function stripAccents($str) {
+        $str = preg_replace("/[^a-zA-Z0-9\s]/", "", $str);
         return strtr(utf8_decode($str), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
     }
 }

@@ -43,23 +43,99 @@
             iconUrl: '{{ asset('asset/img/gas/marker/user.png') }}',
         })
 
-        var special = L.icon({
-            iconUrl: '{{ asset('asset/img/gas/marker/special.png') }}',
-        })
-
         var low = L.icon({
             iconUrl: '{{ asset('asset/img/gas/marker/low.png') }}',
         })
 
         map.locate({setView: true, maxZoom: 13})
 
+        function getGasStationId() {
+            $.get({
+                url: '{{ path('ajax_gas_station_id') }}',
+                type: 'GET',
+                async: true,
+                data: {'station_id': {{ sid }}},
+                success: function (element, statut) {
+                    $('.gas_station_popup').remove()
+                    var content = "<div class='gas_station_popup'><b class='gas_station_popup_close' onclick='$(\".gas_station_popup\").remove();'></b>" + element['content'] + "</div>"
+                    $('#gas_stations').append(content)
+                    $.each(low_prices, function(key, value) {
+                        $('.' + value[0] + '.' + value[2]).css('color', 'green')
+                    })
+                    map.setView([parseFloat(element['latitude']), parseFloat(element['longitude'])])
+                }
+            })
+        }
+
+        function getGasStations(latitude, longitude, radius) {
+            $.get({
+                url: '{{ path('ajax_gas_stations_map') }}',
+                type: 'GET',
+                async: true,
+                data: {'latitude': latitude, 'longitude': longitude, 'radius': radius - (radius/3)},
+                success: function (elements, statut) {
+                    markersInArray = {}
+                    low_prices = {}
+                    {% for type in gas_types %}
+                    low_prices['{{ type.id }}'] = [null, 1000]
+                    {% endfor %}
+
+                    group.clearLayers();
+                    const objects = JSON.parse(elements)
+
+                    $.each(objects, function(index, element) {
+                        $.each(element.prices, function (index, price) {
+                            if (parseFloat(price.value) <= parseFloat(low_prices[price.type.id][1])) {
+                                low_prices[price.type.id][0] = element.id
+                                low_prices[price.type.id][1] = price.value
+                                low_prices[price.type.id][2] = price.type.id
+                            }
+                        })
+
+                        object[marker + element.id] = L.marker([parseFloat(element.address.latitude), parseFloat(element.address.longitude)], {icon: normal}).addTo(group).on('click', function(e) {
+                            $.get({
+                                url: '{{ path('ajax_gas_station_id') }}',
+                                type: 'GET',
+                                async: true,
+                                data: {'station_id': element.id},
+                                success: function (element, statut) {
+                                    $('.gas_station_popup').remove()
+                                    var content = "<div class='gas_station_popup'><b class='gas_station_popup_close' onclick='$(\".gas_station_popup\").remove();'></b>" + element['content'] + "</div>"
+                                    $('#gas_stations').append(content)
+                                    $.each(low_prices, function(key, value) {
+                                        $('.' + value[0] + '.' + value[2]).css('color', 'green')
+                                    })
+                                }
+                            })
+                        })
+
+                        markersInArray[element.id] = object[marker + element.id]
+                    })
+
+                    $.each(low_prices, function (index, element) {
+                        var marker = markersInArray[element[0]]
+                        if (marker) {
+                            marker.setIcon(low)
+                            marker.setZIndexOffset(100)
+                        }
+                        $('.' + element[0] + '.' + element[2]).css('color', 'green')
+                    })
+                }
+            })
+        }
+
         map.on('locationfound', function (e) {
             var radius = e.accuracy;
-            L.marker(e.latlng).addTo(map).on('click', function(e) {
-                map.setView([parseFloat(e.latlng.lat), parseFloat(e.latlng.lng)])
-            })
             L.circle(e.latlng, radius).addTo(map)
+            var marker = L.marker(e.latlng).addTo(map)
+            if ({{ sid }} == 0) {
+                marker.on('click', function(e) {
+                    map.setView([parseFloat(e.latlng.lat), parseFloat(e.latlng.lng)])
+                })
+                return false;
+            }
 
+            getGasStationId()
         })
 
         map.on('locationerror', function (e) {
@@ -86,36 +162,9 @@
             getGasStations(lat, lng, mapDistance)
         });
 
-        function getGasStations(latitude, longitude, radius) {
-
-            $.get({
-                url: '{{ path('ajax_gas_stations_map') }}',
-                type: 'GET',
-                async: true,
-                data: {'latitude': latitude, 'longitude': longitude, 'radius': radius},
-                success: function (elements, statut) {
-                    group.clearLayers();
-                    const objects = JSON.parse(elements)
-                    $.each(objects, function(index, element) {
-                        object[marker + element.id] = L.marker([parseFloat(element.address.latitude), parseFloat(element.address.longitude)], {icon: normal}).addTo(group).on('click', function(e) {
-                            map.setView([parseFloat(element.address.latitude), parseFloat(element.address.longitude)])
-                            $.get({
-                                url: '{{ path('ajax_gas_station') }}',
-                                type: 'GET',
-                                async: true,
-                                data: {'station_id': element.id},
-                                success: function (element, statut) {
-                                    $('.gas_station_popup').remove()
-                                    var content = "<div class='gas_station_popup'>" + element + "</div>"
-                                    console.log(content)
-                                    $('#gas_stations').append(content)
-                                }
-                            })
-                        })
-                    })
-                }
-            })
-        }
+        $('.gas_station_popup_close').click(function () {
+            $(".gas_station_popup").remove()
+        })
 
     </script>
 {% endblock %}

@@ -11,7 +11,6 @@ use App\Repository\Gas\StationRepository;
 use App\Repository\Google\PlaceRepository;
 use App\Util\FileSystem;
 use App\Util\Google\ApiPlace;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -116,7 +115,17 @@ class CreateGasStationGooglePlaceHandler implements MessageHandlerInterface
         }
 
         foreach ($details['reviews'] as $detail) {
-            $review = new Review($detail['text'] ?? null, $detail['language'] ?? null, $detail['rating'] ?? null, DateTime::createFromFormat('U', $detail['time'] ?? true),null);
+            $review = new Review(
+                $detail['text'] ?? null,
+                $detail['language'] ?? null,
+                $detail['rating'] ?? null,
+                $detail['time'] ?? null,
+                $detail['author_name'] ?? null,
+                $detail['author_url'] ?? null,
+                $detail['profile_photo_url'] ?? null,
+                $detail['relative_time_description'] ?? null,
+                null
+            );
             $station->addReview($review);
         }
     }

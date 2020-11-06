@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ReviewRepository;
 use App\Traits\DoctrineEventsTrait;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -57,6 +58,56 @@ class Review
     private $rating;
 
     /**
+     * @var ?string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
+     */
+    private $authorName;
+
+    /**
+     * @var ?string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
+     */
+    private $authorURL;
+
+    /**
+     * @var ?string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
+     */
+    private $profilePhotoUrl;
+
+    /**
+     * @var ?string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"Review:GasStation"})
+     */
+    private $relativeTimeDescription;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GasStation:Price"})
+     */
+    private $dateTimestamp;
+
+    /**
      * @var ?\DateTime
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -77,12 +128,17 @@ class Review
      */
     public $user;
 
-    public function __construct($text, $language, $rating, $date, $user)
+    public function __construct($text, $language, $rating, $dateTimestamp, $authorName, $authorURL, $profilePhotoUrl, $relativeTimeDescription, $user)
     {
         $this->text = $text;
         $this->language = $language;
         $this->rating = $rating;
-        $this->date = $date;
+        $this->dateTimestamp = $dateTimestamp;
+        $this->authorName = $authorName;
+        $this->authorURL = $authorURL;
+        $this->profilePhotoUrl = $profilePhotoUrl;
+        $this->relativeTimeDescription = $relativeTimeDescription;
+        $this->date = DateTime::createFromFormat('U', $dateTimestamp);
         $this->user = $user;
     }
 
@@ -147,6 +203,66 @@ class Review
     public function setUser(?string $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAuthorName(): ?string
+    {
+        return $this->authorName;
+    }
+
+    public function setAuthorName(?string $authorName): self
+    {
+        $this->authorName = $authorName;
+
+        return $this;
+    }
+
+    public function getAuthorURL(): ?string
+    {
+        return $this->authorURL;
+    }
+
+    public function setAuthorURL(?string $authorURL): self
+    {
+        $this->authorURL = $authorURL;
+
+        return $this;
+    }
+
+    public function getProfilePhotoUrl(): ?string
+    {
+        return $this->profilePhotoUrl;
+    }
+
+    public function setProfilePhotoUrl(?string $profilePhotoUrl): self
+    {
+        $this->profilePhotoUrl = $profilePhotoUrl;
+
+        return $this;
+    }
+
+    public function getRelativeTimeDescription(): ?string
+    {
+        return $this->relativeTimeDescription;
+    }
+
+    public function setRelativeTimeDescription(?string $relativeTimeDescription): self
+    {
+        $this->relativeTimeDescription = $relativeTimeDescription;
+
+        return $this;
+    }
+
+    public function getDateTimestamp(): ?int
+    {
+        return $this->dateTimestamp;
+    }
+
+    public function setDateTimestamp(int $dateTimestamp): self
+    {
+        $this->dateTimestamp = $dateTimestamp;
 
         return $this;
     }

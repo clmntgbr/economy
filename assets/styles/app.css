@@ -32,10 +32,254 @@ html, body {
   position: fixed;
   top: 10px;
   right: 10px;
+  -webkit-box-shadow: -7px 7px 17px -2px rgba(71,71,71,1);
+  -moz-box-shadow: -7px 7px 17px -2px rgba(71,71,71,1);
+  box-shadow: -7px 7px 17px -2px rgba(71,71,71,1);
+}
+
+.gas_station_popup_close {
+  background-image: url("../img/close.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 11;
+  font-weight: bolder;
+  cursor: pointer;
 }
 
 #map {
   width: 100%;
   height: 100vh;
   position: relative;
+}
+
+
+
+#gas_station_id h3 {
+  font-family: Raleway-Bold, sans-serif;
+  padding: 20px;
+  border-bottom: 1px solid;
+  background-color: #3b3b3b;
+  margin: 0 auto;
+  font-size: 30px;
+  letter-spacing: 1px;
+  color: #fff;
+  border-radius: 5px
+}
+
+#gas_station_id header {
+  width: 100%;
+  height: calc(100vh - 72px);
+  position: relative
+}
+
+#gas_station_id header img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%
+}
+
+#gas_station_id header .presentation {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  top: 50%;
+  text-align: center
+}
+
+#gas_station_id header .presentation h1 {
+  border-radius: 5px 5px 0 0;
+  color: #fff;
+  padding: 20px 20px 0;
+  display: inline-block;
+  background-color: rgba(0, 0, 0, .65);
+  margin-bottom: 0;
+  font-family: Raleway-Bold, sans-serif;
+  font-size: 40px
+}
+
+#gas_station_id header .presentation h2 {
+  color: #fff;
+  display: inline-block;
+  margin-bottom: 0;
+  margin-top: 21px
+}
+
+#gas_station_id header .presentation h2 a {
+  color: #fff;
+  background-color: rgba(0, 0, 0, .65);
+  padding: 20px;
+  border-radius: 5px
+}
+
+@media (max-width: 575px) {
+  #gas_station_id .information, #gas_station_id .prices {
+    padding: 10px !important
+  }
+}
+
+#gas_station_id .information {
+  padding: 10px 0
+}
+
+@media (min-width: 992px) {
+  #gas_station_id .information .types:first-child {
+    padding: 5px 5px 5px 0 !important
+  }
+
+  #gas_station_id .information .types:nth-child(3) {
+    padding: 5px 0 5px 5px !important
+  }
+
+  #gas_station_id .information .types:nth-child(4) {
+    padding: 5px 5px 5px 0 !important
+  }
+
+  #gas_station_id .information .types:nth-child(6) {
+    padding: 5px 0 5px 5px !important
+  }
+}
+
+@media (min-width: 576px) and (max-width: 991px) {
+  #gas_station_id .information .types:first-child {
+    padding: 5px 5px 5px 0 !important
+  }
+
+  #gas_station_id .information .types:nth-child(2) {
+    padding: 5px 0 5px 5px !important
+  }
+
+  #gas_station_id .information .types:nth-child(3) {
+    padding: 5px 5px 5px 0 !important
+  }
+
+  #gas_station_id .information .types:nth-child(4) {
+    padding: 5px 0 5px 5px !important
+  }
+
+  #gas_station_id .information .types:nth-child(5) {
+    padding: 5px 5px 5px 0 !important
+  }
+
+  #gas_station_id .information .types:nth-child(6) {
+    padding: 5px 0 5px 5px !important
+  }
+}
+
+@media (max-width: 575px) {
+  #gas_station_id .information .types {
+    padding: 5px 0 !important
+  }
+}
+
+#gas_station_id .information .last_prices {
+  margin: 5px auto
+}
+
+#gas_station_id .information .last_prices .types {
+  text-align: center;
+  padding: 5px
+}
+
+#gas_station_id .information .last_prices .types .item {
+  height: 200px;
+  border-radius: 5px;
+  background-color: #757575
+}
+
+#gas_station_id .information .last_prices .types .item .name {
+  font-family: Raleway-Bold, sans-serif;
+  font-size: 30px;
+  letter-spacing: 1px;
+  color: #fff;
+  padding: 5px 0
+}
+
+#gas_station_id .information .last_prices .types .item .price {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  color: #fff;
+  font-family: Raleway-Bold, sans-serif;
+  font-size: 35px
+}
+
+#gas_station_id .information .last_prices .types .item .small {
+  font-family: Raleway, sans-serif;
+  font-size: 20px
+}
+
+#gas_station_id .information .last_prices .types .item .date {
+  font-family: Raleway, sans-serif;
+  font-size: 12px;
+  color: #fff;
+  position: absolute;
+  bottom: 20px;
+  right: 20px
+}
+
+#gas_station_id .information .last_prices .types .orange {
+  background-color: #fb8c00
+}
+
+#gas_station_id .information .last_prices .types .green {
+  background-color: #43a047
+}
+
+#gas_station_id .information .last_prices .types .red {
+  background-color: #e53935
+}
+
+#gas_station_id .map #map {
+  height: 600px
+}
+
+#gas_station_id .prices {
+  padding-top: 10px !important
+}
+
+#gas_station_id .prices .gas_prices #gas_year {
+  margin: 20px 0 10px
+}
+
+#gas_station_id .prices .gas_prices .chart_prices {
+  padding: 0;
+  margin: 20px 0
+}
+
+#gas_station_id .prices .gas_prices .chart_prices:last-child {
+  margin: 20px 0 0 !important
+}
+
+#gas_station_id .prices .gas_prices .chart_prices_none {
+  display: none;
+  height: 400px;
+  border: 1px solid #e6e6e6;
+  position: relative;
+  padding: 0;
+  margin: 20px 0
+}
+
+#gas_station_id .prices .gas_prices .chart_prices_none p {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  width: 100%;
+  text-align: center;
+  color: #b9b9b9
+}
+
+#gas_station_id .gas_station_comment .comments {
+  margin: 20px auto;
+}
+
+#gas_station_id .gas_station_comment .comments .author, #gas_station_id .gas_station_comment .comments .actions {
+  font-family: Raleway-Bold, sans-serif;
 }
