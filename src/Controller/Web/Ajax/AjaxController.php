@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Web;
+namespace App\Controller\Web\Ajax;
 
 use App\Entity\Gas\Station;
 use App\Repository\Gas\PriceRepository;

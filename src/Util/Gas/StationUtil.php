@@ -25,7 +25,7 @@ class StationUtil
         $this->router = $router;
     }
 
-    public function getGoogleRating($googleRating): string
+    public function getGoogleRating($googleRating, string $ratingSize = 'huge', int $fontSize = 15): string
     {
         if(is_null($googleRating)) {
             return '<i>there is no rating at this moment.</i>';
@@ -34,7 +34,7 @@ class StationUtil
         $value = (float)$googleRating;
         $integer = (int)$googleRating;
 
-        $html = sprintf("<div style='margin-top: 10px;text-align: center;'><span style='font-weight: 500;font-size: 15px;top: -2px;position: relative;'>%s</span>&nbsp;&nbsp;<div class='ui huge star rating'>", $value);
+        $html = sprintf("<div style='margin-top: 10px;text-align: center;'><span style='font-weight: bolder;font-size: %spx;top: -2px;position: relative;'>%s</span>&nbsp;&nbsp;<div class='ui %s star rating'>", $fontSize, $value, $ratingSize);
 
         for ($i=1;$i<=$integer;$i++) {
             $html .= "<i class='icon active'></i>";

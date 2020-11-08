@@ -37,7 +37,7 @@ class GasStationController extends AbstractFOSRestController
     /**
      * @Rest\Get(path="/gas/station/{id}", name="gas_station_id")
      * @ParamConverter("station", class="App\Entity\Gas\Station", options={"mapping": {"id": "id"}})
-     * @Rest\View(serializerGroups={"GasStation", "GasStation:Price", "GasStation:Type", "GasStation:Service", "GooglePlace", "Review:GasStation"})
+     * @Rest\View(serializerGroups={"GasStation", "Address", "GasStation:Price", "GasStation:Type", "GasStation:Service", "GooglePlace", "Review:GasStation"})
      */
     public function getGasStationById(Request $request, Station $station)
     {

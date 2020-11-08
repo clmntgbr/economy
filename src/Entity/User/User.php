@@ -3,6 +3,7 @@
 namespace App\Entity\User;
 
 use App\Entity\Gas\Station;
+use App\Entity\Media;
 use App\Repository\User\UserRepository;
 use App\Traits\DoctrineEventsTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -78,10 +79,19 @@ class User implements UserInterface
      */
     private $gasStationsLikes;
 
+    /**
+     * @var Media
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\Media", cascade={"persist", "remove"}, fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="avatar_id", referencedColumnName="id", nullable=true)
+     */
+    private $avatar;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
         $this->isActive = true;
+        $this->avatar = new Media('asset/img/', 'img_avatar.png', 'image/png', 'png', 0);
         $this->gasStationsLikes = new ArrayCollection();
     }
 
@@ -206,6 +216,18 @@ class User implements UserInterface
     public function removeGasStationsLike(Station $gasStationsLike): self
     {
         $this->gasStationsLikes->removeElement($gasStationsLike);
+
+        return $this;
+    }
+
+    public function getAvatar(): ?Media
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?Media $avatar): self
+    {
+        $this->avatar = $avatar;
 
         return $this;
     }

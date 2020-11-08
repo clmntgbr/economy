@@ -68,28 +68,57 @@
         </div>
     </section>
 
+{#    <section class="gas_station_opening">#}
+{#        {% for openingHour in station.googlePlace.openingHours %}#}
+{#            <p>{{ openingHour }}</p>#}
+{#        {% endfor %}#}
+{#    </section>#}
+
+
     <section class="gas_station_comment">
+        <div style="margin-top: 20px;">{{ google_rating|raw }}</div>
+        <p style="text-align: center;margin-bottom: 40px;">({{ station.googlePlace.userRatingsTotal }} avis)</p>
         <div class="ui comments">
+            {% set hasCommented = false %}
             {% for review in station.reviews %}
                 <div class="comment">
                     <a class="avatar">
                         <img src="{{ review.profilePhotoUrl }}">
                     </a>
                     <div class="content">
-                        <a class="author" href="{{ review.authorURL }}" target="_blank">{{ review.authorName|title }}</a>
+                        <a class="author">{{ review.authorName|title }}</a>
                         <div class="metadata">
-                            <span class="date">{{ review.date|date('d/m/Y à H:i:s') }} - {{ review.relativeTimeDescription }}</span>
+                            <span class="date">{{ review.date|date('d/m/Y à H:i:s') }}</span>
                         </div>
                         <div class="text">
-                            {{ review.text }}
+                            {{ review.text|raw }}
                         </div>
-                        <div class="actions">
+                        <div class="actions rating">
                             {{ review.rating }}/5
                         </div>
+                        {% if app.user and app.user.id == review.createdBy.id %}
+                            {% set hasCommented = true %}
+                            <div class="actions">
+                                <a class="delete" href="{{ path('gas_station_id_remove_comment', {'id': review.id}) }}">Supprimer</a>
+                            </div>
+                        {% endif %}
                     </div>
                     <br>
                 </div>
             {% endfor %}
+
+            {% if hasCommented == false %}
+                <form class="ui reply form" action="{{ path('gas_station_id_comment', {'id': station.id}) }}" method="post">
+                    <div class="ui large star rating"></div>
+                    <input name="comment[rating]" value="2"/>
+                    <div class="field">
+                        <textarea name="comment[body]"></textarea>
+                    </div>
+                    <div class="ui primary submit labeled icon button">
+                        <i class="icon edit"></i> Ajouter un commentaire
+                    </div>
+                </form>
+            {% endif %}
         </div>
     </section>
 
@@ -134,6 +163,13 @@
             L.marker(e.latlng).addTo(map)
             L.marker([parseFloat({{ station.address.latitude }}), parseFloat({{ station.address.longitude }})], {icon: normal}).addTo(group)
             map.setView([parseFloat({{ station.address.latitude }}), parseFloat({{ station.address.longitude }})])
+            map.setZoom(13)
+        })
+
+        map.on('locationerror', function (e) {
+            L.marker([parseFloat({{ station.address.latitude }}), parseFloat({{ station.address.longitude }})], {icon: normal}).addTo(group)
+            map.setView([parseFloat({{ station.address.latitude }}), parseFloat({{ station.address.longitude }})])
+            map.setZoom(13)
         })
 
 
@@ -205,7 +241,7 @@
                 },
                 yAxis: {
                     title: {
-                        text: element.type_name + ' Price'
+                        text: 'Prix (€)'
                     }
                 },
                 legend: {
@@ -257,6 +293,17 @@
             }
         })
 
+        $('.ui.large.star.rating').rating({
+            initialRating: 2,
+            maxRating: 5,
+            onRate: function (value) {
+                $("[name='comment[rating]']").val(value);
+            }
+        });
+
+        $('.ui.submit.button').click(function () {
+            $('.ui.reply.form').submit()
+        })
     </script>
 {% endblock %}
 

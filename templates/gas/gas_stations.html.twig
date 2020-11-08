@@ -15,11 +15,11 @@
 {% block javascripts %}
     <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
     <script>
-        var lat, lng
+        const defaultCoordinate = {'latitude': 48.855680, 'longitude': 2.347045};
         var map, infoWindow, markers = [], markersInArray = [], stations, object = {}, low_prices = {}
         var marker = 'marker'
 
-        map = L.map('map').setView([48.855680, 2.347045], 12)
+        map = L.map('map').setView([defaultCoordinate.latitude, defaultCoordinate.longitude], 12)
 
         map.scrollWheelZoom.disable()
 
@@ -139,7 +139,8 @@
         })
 
         map.on('locationerror', function (e) {
-            alert(e.message);
+            map.setZoom(13)
+            getGasStations(defaultCoordinate.latitude, defaultCoordinate.longitude, 4316.224161749635)
         })
 
         map.on('moveend', function (e) {

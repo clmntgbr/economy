@@ -195,8 +195,9 @@ class Station
     private $googlePlace;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Review", cascade={"persist"}, fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Review", cascade={"persist"}, fetch="EAGER")
      * @ORM\JoinTable(name="gas_station_reviews")
+     * @ORM\OrderBy({"dateTimestamp" = "ASC"})
      *
      * @Serializer\Expose()
      * @Serializer\Groups(groups={"GasStation"})
@@ -674,6 +675,13 @@ class Station
     public function setReferenceForGooglePlace(?string $reference): self
     {
         $this->googlePlace->setReference($reference);
+
+        return $this;
+    }
+
+    public function setOpeningHoursForGooglePlace(?array $openingHours): self
+    {
+        $this->googlePlace->setOpeningHours($openingHours);
 
         return $this;
     }

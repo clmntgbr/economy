@@ -88,16 +88,6 @@ class Review
     private $profilePhotoUrl;
 
     /**
-     * @var ?string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     *
-     * @Serializer\Expose()
-     * @Serializer\Groups(groups={"Review:GasStation"})
-     */
-    private $relativeTimeDescription;
-
-    /**
      * @var int
      *
      * @ORM\Column(type="integer")
@@ -117,18 +107,7 @@ class Review
      */
     private $date;
 
-    /**
-     * @var ?User
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\User\User", cascade={"persist"}, fetch="EXTRA_LAZY")
-     * @ORM\Column(nullable=true)
-     *
-     * @Serializer\Expose()
-     * @Serializer\Groups(groups={"Review:GasStation"})
-     */
-    public $user;
-
-    public function __construct($text, $language, $rating, $dateTimestamp, $authorName, $authorURL, $profilePhotoUrl, $relativeTimeDescription, $user)
+    public function __construct($text, $language, $rating, $dateTimestamp, $authorName, $authorURL, $profilePhotoUrl, $user)
     {
         $this->text = $text;
         $this->language = $language;
@@ -137,9 +116,8 @@ class Review
         $this->authorName = $authorName;
         $this->authorURL = $authorURL;
         $this->profilePhotoUrl = $profilePhotoUrl;
-        $this->relativeTimeDescription = $relativeTimeDescription;
         $this->date = DateTime::createFromFormat('U', $dateTimestamp);
-        $this->user = $user;
+        $this->createdBy = $user;
     }
 
     public function getId(): ?int
@@ -195,21 +173,13 @@ class Review
         return $this;
     }
 
-    public function getUser(): ?string
-    {
-        return $this->user;
-    }
-
-    public function setUser(?string $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     public function getAuthorName(): ?string
     {
-        return $this->authorName;
+        if (is_null($this->createdBy)) {
+            return $this->authorName;
+        }
+
+        return $this->createdBy->getEmail();
     }
 
     public function setAuthorName(?string $authorName): self
@@ -233,24 +203,16 @@ class Review
 
     public function getProfilePhotoUrl(): ?string
     {
-        return $this->profilePhotoUrl;
+        if (is_null($this->createdBy)) {
+            return $this->profilePhotoUrl;
+        }
+
+        return sprintf('%s%s', $this->createdBy->getAvatar()->getPath(), $this->createdBy->getAvatar()->getName());
     }
 
     public function setProfilePhotoUrl(?string $profilePhotoUrl): self
     {
         $this->profilePhotoUrl = $profilePhotoUrl;
-
-        return $this;
-    }
-
-    public function getRelativeTimeDescription(): ?string
-    {
-        return $this->relativeTimeDescription;
-    }
-
-    public function setRelativeTimeDescription(?string $relativeTimeDescription): self
-    {
-        $this->relativeTimeDescription = $relativeTimeDescription;
 
         return $this;
     }

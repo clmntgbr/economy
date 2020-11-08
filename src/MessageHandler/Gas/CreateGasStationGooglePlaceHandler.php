@@ -89,6 +89,7 @@ class CreateGasStationGooglePlaceHandler implements MessageHandlerInterface
                 ->setGlobalCodeForGooglePlace($details['plus_code']['global_code'] ?? null)
                 ->setGoogleRatingForGooglePlace($details['rating'] ?? null)
                 ->setReferenceForGooglePlace($details['reference'] ?? null)
+                ->setOpeningHoursForGooglePlace($details['opening_hours']['weekday_text'] ?? null)
                 ->setUserRatingsTotalForGooglePlace($details['user_ratings_total'] ?? null)
                 ->setUrlForGooglePlace($details['url'] ?? null)
                 ->setDetailsForGooglePlace($details)
@@ -123,7 +124,6 @@ class CreateGasStationGooglePlaceHandler implements MessageHandlerInterface
                 $detail['author_name'] ?? null,
                 $detail['author_url'] ?? null,
                 $detail['profile_photo_url'] ?? null,
-                $detail['relative_time_description'] ?? null,
                 null
             );
             $station->addReview($review);

@@ -280,6 +280,15 @@ html, body {
   margin: 20px auto;
 }
 
-#gas_station_id .gas_station_comment .comments .author, #gas_station_id .gas_station_comment .comments .actions {
+#gas_station_id .gas_station_comment .comments .author, #gas_station_id .gas_station_comment .comments .actions.rating {
   font-family: Raleway-Bold, sans-serif;
+  margin-bottom: 10px;
+}
+
+#gas_station_id .ui.reply.form .ui.large.star.rating {
+  margin-bottom: 20px;
+}
+
+input[name="comment[rating]"] {
+  display: none;
 }

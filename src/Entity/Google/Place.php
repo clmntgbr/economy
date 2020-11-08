@@ -158,6 +158,16 @@ class Place
      * @var array
      *
      * @ORM\Column(type="array", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
+     */
+    private $openingHours;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(type="array", nullable=true)
      */
     private $details;
 
@@ -330,6 +340,18 @@ class Place
     public function setDetails(?array $details): self
     {
         $this->details = $details;
+
+        return $this;
+    }
+
+    public function getOpeningHours(): ?array
+    {
+        return $this->openingHours;
+    }
+
+    public function setOpeningHours(?array $openingHours): self
+    {
+        $this->openingHours = $openingHours;
 
         return $this;
     }
