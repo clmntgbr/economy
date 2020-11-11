@@ -19,7 +19,6 @@ security:
                 check_path: /auth/authentication_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-
         api:
             pattern: ^/api
             stateless: true
@@ -34,6 +33,12 @@ security:
             anonymous: true
             lazy: true
             provider: app_user_provider
+            guard:
+                authenticators:
+                    - App\Security\Guard\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                target: app_login
 
     access_control:
         - { path: ^/auth/authentication, roles: IS_AUTHENTICATED_ANONYMOUSLY }

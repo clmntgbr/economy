@@ -6,19 +6,20 @@ use App\Entity\Gas\Station;
 use App\Entity\Gas\Type;
 use App\Entity\Review;
 use App\Entity\User\User;
-use App\Repository\Gas\StationRepository;
 use App\Repository\Gas\TypeRepository;
-use App\Repository\Google\PlaceRepository;
-use App\Repository\User\UserRepository;
 use App\Util\DotEnv;
 use App\Util\Gas\StationUtil;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @IsGranted("ROLE_USER")
+ */
 class GasController extends AbstractController
 {
     /** @var EntityManagerInterface */
@@ -27,28 +28,18 @@ class GasController extends AbstractController
     /** @var TypeRepository */
     private $typeRepository;
 
-    /** @var UserRepository */
-    private $userRepository;
-
     /** @var StationUtil */
     private $stationUtil;
 
     /** @var DotEnv */
     private $dotEnv;
 
-    public function __construct(EntityManagerInterface $entityManager, TypeRepository $typeRepository, UserRepository $userRepository, StationUtil $stationUtil, DotEnv $dotEnv)
+    public function __construct(EntityManagerInterface $entityManager, TypeRepository $typeRepository, StationUtil $stationUtil, DotEnv $dotEnv)
     {
         $this->entityManager = $entityManager;
         $this->typeRepository = $typeRepository;
-        $this->userRepository = $userRepository;
         $this->stationUtil = $stationUtil;
         $this->dotEnv = $dotEnv;
-    }
-    /**
-     * @Route("/", name="default")
-     */
-    public function index(StationRepository $stationRepository, PlaceRepository $placeRepository)
-    {
     }
 
     /**
@@ -96,10 +87,8 @@ class GasController extends AbstractController
             return $this->redirectToRoute('gas_station_id', ['id' => $station->getId()], 400);
         }
 
-        $user = $this->getFakeUser();
-
         $station->addReview(
-            new Review($comment['body'], 'FR', $comment['rating'], (new DateTime())->format('U'), null, null, null, $user)
+            new Review($comment['body'], 'FR', $comment['rating'], (new DateTime())->format('U'), null, null, null, $this->getUser())
         );
 
         $this->entityManager->persist($station);
@@ -133,10 +122,5 @@ class GasController extends AbstractController
         return $this->render('gas/gas_type_id.html.twig', [
             'type' => $type
         ]);
-    }
-
-    private function getFakeUser()
-    {
-        return $this->userRepository->findOneBy(['email' => 'totogm@gmail.com']);
     }
 }

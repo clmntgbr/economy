@@ -2,87 +2,35 @@
 
 namespace App\Controller\Web\Auth;
 
-use App\Entity\User\User;
-use App\Form\Auth\AuthenticationType;
-use App\Repository\User\UserRepository;
-use App\Security\LoginFormAuthenticator;
-use App\Util\DotEnv;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class AuthController extends AbstractController
 {
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
-    /** @var UserRepository */
-    private $userRepository;
-
-    /** @var SessionInterface */
-    private $session;
-
-    /** @var AuthenticationManagerInterface */
-    private $authenticationManager;
-
-    /** @var DotEnv */
-    private $dotEnv;
-
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var ValidatorInterface */
-    private $validator;
-
-    /** @var UserPasswordEncoderInterface */
-    private $passwordEncoder;
-
-    public function __construct(SessionInterface $session, AuthenticationManagerInterface $authenticationManager, TokenStorageInterface $tokenStorage, UserPasswordEncoderInterface $passwordEncoder, ValidatorInterface $validator, EntityManagerInterface $entityManager, UserRepository $userRepository, DotEnv $dotEnv)
+    /**
+     * @Route("/login", name="app_login")
+     */
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        $this->validator = $validator;
-        $this->session = $session;
-        $this->passwordEncoder = $passwordEncoder;
-        $this->entityManager = $entityManager;
-        $this->authenticationManager = $authenticationManager;
-        $this->userRepository = $userRepository;
-        $this->tokenStorage = $tokenStorage;
-        $this->dotEnv = $dotEnv;
+         if ($this->getUser()) {
+             return $this->redirectToRoute('gas_stations');
+         }
+
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('auth/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
     /**
-     * @Route("/login", name="login")
+     * @Route("/logout", name="app_logout")
      */
-    public function loginAction(Request $request, GuardAuthenticatorHandler $guardAuthenticatorHandler, LoginFormAuthenticator $formAuthenticator)
+    public function logout()
     {
-        $user = new User();
-
-        $form = $this->createForm(AuthenticationType::class, $user, []);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $registeredUser = $this->userRepository->findOneBy(['email' => $user->getEmail()]);
-            if ($registeredUser instanceof User) {
-                if ($this->passwordEncoder->isPasswordValid($registeredUser, $user->getPassword())) {
-                    return $guardAuthenticatorHandler->authenticateUserAndHandleSuccess(
-                        $user,
-                        $request,
-                        $formAuthenticator,
-                        'main'
-                    );
-                }
-            }
-        }
-
-        return $this->render('auth/login.html.twig', [
-            'form' => $form->createView()
-        ]);
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }
