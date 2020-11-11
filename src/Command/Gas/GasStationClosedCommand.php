@@ -63,6 +63,8 @@ class GasStationClosedCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $stationFound = [];
+
         $this->command->start();
 
         $io = new SymfonyStyle($input, $output);
@@ -77,6 +79,7 @@ class GasStationClosedCommand extends Command
 
         foreach ($this->stations as $station) {
             if ($station['date'] < $date) {
+                $stationFound[$station['station_id']] = $station;
                 $this->messageBus->dispatch(new ClosedGasStation($station['station_id'], $station['date']));
                 $this->logger['stations']++;
             }
@@ -97,7 +100,7 @@ class GasStationClosedCommand extends Command
         $progressBar = new ProgressBar($output, count($this->stations));
 
         foreach ($this->stations as $station) {
-            if ("0" == $station['count'] && "0" == $station['is_closed']) {
+            if ("0" == $station['count'] && "0" == $station['is_closed'] && (!(isset($stationFound[$station['station_id']])))) {
                 $this->messageBus->dispatch(new ClosedGasStation($station['station_id'], $station['date']));
                 $this->logger['stations']++;
             }
