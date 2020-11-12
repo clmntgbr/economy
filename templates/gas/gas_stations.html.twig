@@ -16,6 +16,18 @@
             <div class="menu-wrap">
                 <label for="slide-menu-right" class="menu-close" style="background-image: url('{{ asset('asset/img/close.png') }}')">Close</label>
                 <div class="menu-list">
+
+                    <div class="ui form" id="department">
+                        <div class="field">
+                            <label for="departments">Liste des départements</label>
+                            <select multiple="multiple" id="departments" class="ui search dropdown">
+                                {% for department in departments %}
+                                    <option value="{{ department.1 }}">{{ department.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="ui form" id="type">
                         <div class="field">
                             <label for="types">Types de carburants</label>
@@ -26,6 +38,29 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="ui form" id="service">
+                        <div class="field">
+                            <label for="services">Liste des services</label>
+                            <select multiple="multiple" id="services" class="ui search dropdown">
+                                {% for service in gas_services %}
+                                    <option value="{{ service.id }}">{{ service.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="ui form" id="city">
+                        <div class="field">
+                            <label for="cities">Liste des villes</label>
+                            <select multiple="multiple" id="cities" class="ui search dropdown">
+                                {% for city in gas_cities %}
+                                    <option value="{{ city.postal_code }}">{{ city.city }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="ui form" id="reset">
                         <button class="ui google plus button">Reset</button>
                     </div>
@@ -41,7 +76,7 @@
     <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
     <script>
         const defaultCoordinate = {'latitude': 48.855680, 'longitude': 2.347045};
-        var map, infoWindow, markersOut = [], markersIn = [], stations = [], object = {}, low_prices = {}
+        var map, infoWindow, markersIn = [], stations = [], object = {}, low_prices = {}, types = [], services = [], cities = [], departments = []
         var marker = 'marker'
 
         map = L.map('map').setView([defaultCoordinate.latitude, defaultCoordinate.longitude], 12)
@@ -99,25 +134,16 @@
                 async: true,
                 data: {'latitude': latitude, 'longitude': longitude, 'radius': radius - (radius/3)},
                 success: function (elements, statut) {
-                    markersIn = {}
+                    markersIn = []
                     low_prices = {}
                     {% for type in gas_types %}
-                    low_prices['{{ type.id }}'] = [null, 1000]
+                        low_prices['{{ type.id }}'] = [null, 1000]
                     {% endfor %}
 
                     group.clearLayers();
-                    const objects = JSON.parse(elements)
+                    stations = JSON.parse(elements)
 
-                    $.each(objects, function(index, element) {
-                        stations[element.id] = element
-                        $.each(element.prices, function (index, price) {
-                            if (parseFloat(price.value) <= parseFloat(low_prices[price.type.id][1])) {
-                                low_prices[price.type.id][0] = element.id
-                                low_prices[price.type.id][1] = price.value
-                                low_prices[price.type.id][2] = price.type.id
-                            }
-                        })
-
+                    $.each(stations, function(index, element) {
                         object[marker + element.id] = L.marker([parseFloat(element.address.latitude), parseFloat(element.address.longitude)], {icon: normal}).addTo(group).on('click', function(e) {
                             $.get({
                                 url: '{{ path('ajax_gas_station_id') }}',
@@ -128,8 +154,8 @@
                                     $('.gas_station_popup').remove()
                                     var content = "<div class='gas_station_popup'><b class='gas_station_popup_close' onclick='$(\".gas_station_popup\").remove();'></b>" + element['content'] + "</div>"
                                     $('#gas_stations').append(content)
-                                    $.each(low_prices, function(key, value) {
-                                        $('.' + value[0] + '.' + value[2]).css('color', 'green')
+                                    low_prices.forEach(function(element, index, array) {
+                                        $('.' + element[0] + '.' + element[2]).css('color', 'green')
                                     })
                                 }
                             })
@@ -138,20 +164,9 @@
                         markersIn[element.id] = object[marker + element.id]
                     })
 
-                    console.log(stations)
-
-                    $.each(low_prices, function (index, element) {
-                        var marker = markersIn[element[0]]
-                        if (marker) {
-                            marker.setIcon(low)
-                            marker.setZIndexOffset(100)
-                        }
-                        $('.' + element[0] + '.' + element[2]).css('color', 'green')
-                    })
+                    filter()
                 }
             })
-
-            console.log(stations)
         }
 
         map.on('locationfound', function (e) {
@@ -211,10 +226,148 @@
 
         $('#type .ui.dropdown').dropdown({
             action: 'activate',
-            onChange: function (values, text, $items) {
-                console.log(stations)
+            onChange: function (values, text, items) {
+                types = values
+                filter()
             }
         })
+
+        $('#service .ui.dropdown').dropdown({
+            action: 'activate',
+            onChange: function (values, text, items) {
+                services = values
+                filter()
+            }
+        })
+
+        $('#city .ui.dropdown').dropdown({
+            action: 'activate',
+            onChange: function (values, text, items) {
+                cities = values
+                filter()
+            }
+        })
+
+        $('#department .ui.dropdown').dropdown({
+            action: 'activate',
+            onChange: function (values, text, items) {
+                departments = values
+                filter()
+            }
+        })
+
+        $('#reset .button').click(function () {
+            $('#service .ui.dropdown').dropdown('clear')
+            $('#type .ui.dropdown').dropdown('clear')
+            $('#city .ui.dropdown').dropdown('clear')
+            $('#department .ui.dropdown').dropdown('clear')
+            cities = [], services = [], types = [], departments = []
+            filter()
+        })
+
+        function filter() {
+            low_prices = []
+            {% for type in gas_types %}
+                low_prices['{{ type.id }}'] = [null, 1000]
+            {% endfor %}
+
+            stations.forEach(function(item, index, array) {
+                var marker = markersIn[item.id]
+
+                if (typeof (marker) == 'undefined' && marker == null) {
+                    return
+                }
+
+                if (!hasTypes(item) && (0 !== types.length)) {
+                    map.removeLayer(marker)
+                    return
+                }
+
+                if (!hasServices(item) && (0 !== services.length)) {
+                    map.removeLayer(marker)
+                    return
+                }
+
+                if (!hasCities(item) && (0 !== cities.length)) {
+                    map.removeLayer(marker)
+                    return
+                }
+
+                if (!hasDepartments(item) && (0 !== departments.length)) {
+                    map.removeLayer(marker)
+                    return
+                }
+
+                $.each(item.prices, function (index, price) {
+                    if (parseFloat(price.value) <= parseFloat(low_prices[price.type.id][1])) {
+                        low_prices[price.type.id][0] = item.id
+                        low_prices[price.type.id][1] = price.value
+                        low_prices[price.type.id][2] = price.type.id
+                    }
+                })
+
+                marker.addTo(group).addTo(map)
+            });
+
+            $('.gas_station_popup').remove()
+
+            low_prices.forEach(function(element, index, array) {
+                var marker = markersIn[element[0]]
+                if (marker) {
+                    marker.setIcon(low)
+                    marker.setZIndexOffset(100)
+                }
+                $('.' + element[0] + '.' + element[2]).css('color', 'green')
+            })
+        }
+
+        function hasTypes(item) {
+            var isAssociated = false;
+            $.each(item.prices, function (index, price) {
+                var id = price.type.id
+                id = id.toString()
+                if (types.includes(id)) {
+                    isAssociated = true
+                }
+            })
+
+            return isAssociated
+        }
+
+        function hasServices(item) {
+            var isAssociated = false;
+            $.each(item.services, function (index, service) {
+                var id = service.id
+                id = id.toString()
+                if (services.includes(id)) {
+                    isAssociated = true
+                }
+            })
+
+            return isAssociated
+        }
+
+        function hasCities(item) {
+            var isAssociated = false;
+            var id = item.address.postal_code
+            id = id.toString()
+            if (cities.includes(id)) {
+                isAssociated = true
+            }
+
+            return isAssociated
+        }
+
+        function hasDepartments(item) {
+            var isAssociated = false;
+            var id = item.address.postal_code
+            id = id.slice(0,2)
+            if (departments.includes(id)) {
+                isAssociated = true
+            }
+
+            return isAssociated
+        }
 
     </script>
 {% endblock %}

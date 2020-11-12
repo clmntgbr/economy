@@ -29,4 +29,18 @@ class ServiceRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+
+    /**
+     * @return Service[]
+     */
+    public function findGasServiceById()
+    {
+        $query = $this->createQueryBuilder('s')
+            ->select('s.name, s.id')
+            ->orderBy('s.name', 'ASC')
+            ->indexBy('s', 's.id')
+            ->getQuery();
+
+        return $query->getResult();
+    }
 }

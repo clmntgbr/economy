@@ -21,10 +21,10 @@ class AddressRepository extends ServiceEntityRepository
 
     public function findCityWithGasStation()
     {
-        $sql = "SELECT a.postal_code, LOWER(MAX(a.city)) as city, count(s.id) as gas_stations
+        $sql = "SELECT a.postal_code, LOWER(MAX(a.city)) as city
                 FROM gas_station s
                 INNER JOIN address a ON a.id = s.address_id
-                WHERE a.city IS NOT NULL AND a.city != ''
+                WHERE a.city IS NOT NULL AND a.city != '' AND s.is_closed IS FALSE
                 GROUP BY a.postal_code
                 ORDER BY LOWER(MAX(a.city))";
 

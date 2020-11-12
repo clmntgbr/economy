@@ -76,7 +76,7 @@ class Address
      * @ORM\Column(type="string")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"Address"})
+     * @Serializer\Groups(groups={"Address", "Ajax:GasStation"})
      */
     private $postalCode;
 

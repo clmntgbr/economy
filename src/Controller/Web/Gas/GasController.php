@@ -7,6 +7,7 @@ use App\Entity\Gas\Type;
 use App\Entity\Review;
 use App\Entity\User\User;
 use App\Repository\AddressRepository;
+use App\Repository\Gas\ServiceRepository;
 use App\Repository\Gas\TypeRepository;
 use App\Util\DotEnv;
 use App\Util\Gas\StationUtil;
@@ -30,6 +31,9 @@ class GasController extends AbstractController
     /** @var TypeRepository */
     private $typeRepository;
 
+    /** @var ServiceRepository */
+    private $serviceRepository;
+
     /** @var AddressRepository */
     private $addressRepository;
 
@@ -39,11 +43,12 @@ class GasController extends AbstractController
     /** @var DotEnv */
     private $dotEnv;
 
-    public function __construct(EntityManagerInterface $entityManager, AddressRepository $addressRepository, TypeRepository $typeRepository, StationUtil $stationUtil, DotEnv $dotEnv)
+    public function __construct(ServiceRepository $serviceRepository, EntityManagerInterface $entityManager, AddressRepository $addressRepository, TypeRepository $typeRepository, StationUtil $stationUtil, DotEnv $dotEnv)
     {
         $this->entityManager = $entityManager;
         $this->typeRepository = $typeRepository;
         $this->addressRepository = $addressRepository;
+        $this->serviceRepository = $serviceRepository;
         $this->stationUtil = $stationUtil;
         $this->dotEnv = $dotEnv;
     }
@@ -57,7 +62,9 @@ class GasController extends AbstractController
             'KEY' => $this->dotEnv->load("KEY"),
             'gas_types' => $this->typeRepository->findAll(),
             'sid' => $request->query->get('sid') ?? 0,
-            'cities' => $this->addressRepository->findCityWithGasStation(),
+            'departments' => $this->stationUtil->getDepartments(),
+            'gas_cities' => $this->addressRepository->findCityWithGasStation(),
+            'gas_services' => $this->serviceRepository->findGasServiceById(),
         ]);
     }
 

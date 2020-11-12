@@ -25,7 +25,7 @@ class Service
      * @ORM\Column(type="integer")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation:Service"})
+     * @Serializer\Groups(groups={"GasStation:Service", "Ajax:GasStation"})
      */
     private $id;
 

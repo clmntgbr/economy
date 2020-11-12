@@ -179,7 +179,7 @@ class Station
      * @ORM\ManyToMany(targetEntity="App\Entity\Gas\Service", mappedBy="stations", cascade={"persist"}, fetch="EXTRA_LAZY")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups(groups={"GasStation"})
+     * @Serializer\Groups(groups={"GasStation", "Ajax:GasStation"})
      */
     private $services;
 
