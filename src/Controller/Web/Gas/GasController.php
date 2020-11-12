@@ -6,6 +6,7 @@ use App\Entity\Gas\Station;
 use App\Entity\Gas\Type;
 use App\Entity\Review;
 use App\Entity\User\User;
+use App\Repository\AddressRepository;
 use App\Repository\Gas\TypeRepository;
 use App\Util\DotEnv;
 use App\Util\Gas\StationUtil;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @Route("/webapp")
  * @IsGranted("ROLE_USER")
  */
 class GasController extends AbstractController
@@ -28,16 +30,20 @@ class GasController extends AbstractController
     /** @var TypeRepository */
     private $typeRepository;
 
+    /** @var AddressRepository */
+    private $addressRepository;
+
     /** @var StationUtil */
     private $stationUtil;
 
     /** @var DotEnv */
     private $dotEnv;
 
-    public function __construct(EntityManagerInterface $entityManager, TypeRepository $typeRepository, StationUtil $stationUtil, DotEnv $dotEnv)
+    public function __construct(EntityManagerInterface $entityManager, AddressRepository $addressRepository, TypeRepository $typeRepository, StationUtil $stationUtil, DotEnv $dotEnv)
     {
         $this->entityManager = $entityManager;
         $this->typeRepository = $typeRepository;
+        $this->addressRepository = $addressRepository;
         $this->stationUtil = $stationUtil;
         $this->dotEnv = $dotEnv;
     }
@@ -51,6 +57,7 @@ class GasController extends AbstractController
             'KEY' => $this->dotEnv->load("KEY"),
             'gas_types' => $this->typeRepository->findAll(),
             'sid' => $request->query->get('sid') ?? 0,
+            'cities' => $this->addressRepository->findCityWithGasStation(),
         ]);
     }
 

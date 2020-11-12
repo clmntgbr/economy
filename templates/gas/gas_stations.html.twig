@@ -9,6 +9,31 @@
 {% endblock %}
 
 {% block body %}
+    <div id="filters">
+        <label for="slide-menu-right" class="menu-button">Filtres</label>
+        <div class="slide-menu">
+            <input id="slide-menu-right" class="menu-toggle" type="checkbox"/>
+            <div class="menu-wrap">
+                <label for="slide-menu-right" class="menu-close" style="background-image: url('{{ asset('asset/img/close.png') }}')">Close</label>
+                <div class="menu-list">
+                    <div class="ui form" id="type">
+                        <div class="field">
+                            <label for="types">Types de carburants</label>
+                            <select multiple="multiple" id="types" class="ui search dropdown">
+                                {% for type in gas_types %}
+                                    <option value="{{ type.id }}">{{ type.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="ui form" id="reset">
+                        <button class="ui google plus button">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <label for="slide-menu-right" class="menu-overlay"></label>
+    </div>
     <div id="map" class="gas_stations"></div>
 {% endblock %}
 
@@ -16,7 +41,7 @@
     <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
     <script>
         const defaultCoordinate = {'latitude': 48.855680, 'longitude': 2.347045};
-        var map, infoWindow, markers = [], markersInArray = [], stations, object = {}, low_prices = {}
+        var map, infoWindow, markersOut = [], markersIn = [], stations = [], object = {}, low_prices = {}
         var marker = 'marker'
 
         map = L.map('map').setView([defaultCoordinate.latitude, defaultCoordinate.longitude], 12)
@@ -74,7 +99,7 @@
                 async: true,
                 data: {'latitude': latitude, 'longitude': longitude, 'radius': radius - (radius/3)},
                 success: function (elements, statut) {
-                    markersInArray = {}
+                    markersIn = {}
                     low_prices = {}
                     {% for type in gas_types %}
                     low_prices['{{ type.id }}'] = [null, 1000]
@@ -84,6 +109,7 @@
                     const objects = JSON.parse(elements)
 
                     $.each(objects, function(index, element) {
+                        stations[element.id] = element
                         $.each(element.prices, function (index, price) {
                             if (parseFloat(price.value) <= parseFloat(low_prices[price.type.id][1])) {
                                 low_prices[price.type.id][0] = element.id
@@ -109,11 +135,13 @@
                             })
                         })
 
-                        markersInArray[element.id] = object[marker + element.id]
+                        markersIn[element.id] = object[marker + element.id]
                     })
 
+                    console.log(stations)
+
                     $.each(low_prices, function (index, element) {
-                        var marker = markersInArray[element[0]]
+                        var marker = markersIn[element[0]]
                         if (marker) {
                             marker.setIcon(low)
                             marker.setZIndexOffset(100)
@@ -122,6 +150,8 @@
                     })
                 }
             })
+
+            console.log(stations)
         }
 
         map.on('locationfound', function (e) {
@@ -165,6 +195,25 @@
 
         $('.gas_station_popup_close').click(function () {
             $(".gas_station_popup").remove()
+        })
+
+        $('#filters .menu-button').click(function () {
+            $('#filters .menu-overlay').css('display', 'block')
+        })
+
+        $('#filters .menu-overlay').click(function () {
+            $('#filters .menu-overlay').css('display', 'none')
+        })
+
+        $('#filters .menu-close').click(function () {
+            $('#filters .menu-overlay').css('display', 'none')
+        })
+
+        $('#type .ui.dropdown').dropdown({
+            action: 'activate',
+            onChange: function (values, text, $items) {
+                console.log(stations)
+            }
         })
 
     </script>

@@ -18,4 +18,19 @@ class AddressRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Address::class);
     }
+
+    public function findCityWithGasStation()
+    {
+        $sql = "SELECT a.postal_code, LOWER(MAX(a.city)) as city, count(s.id) as gas_stations
+                FROM gas_station s
+                INNER JOIN address a ON a.id = s.address_id
+                WHERE a.city IS NOT NULL AND a.city != ''
+                GROUP BY a.postal_code
+                ORDER BY LOWER(MAX(a.city))";
+
+        $getConnection = $this->getEntityManager()->getConnection();
+        $statement = $getConnection->prepare($sql);
+        $statement->execute();
+        return $statement->fetchAll();
+    }
 }

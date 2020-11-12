@@ -96,7 +96,7 @@
                         <div class="actions rating">
                             {{ review.rating }}/5
                         </div>
-                        {% if app.user and app.user.id == review.createdBy.id %}
+                        {% if app.user and review.createdBy and app.user.id == review.createdBy.id %}
                             {% set hasCommented = true %}
                             <div class="actions">
                                 <a class="delete" href="{{ path('gas_station_id_remove_comment', {'id': review.id}) }}">Supprimer</a>
