@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/webapp")
+ * @Route("/web/gas")
  * @IsGranted("ROLE_USER")
  */
 class GasController extends AbstractController
@@ -54,7 +54,7 @@ class GasController extends AbstractController
     }
 
     /**
-     * @Route("/gas_stations", name="gas_stations")
+     * @Route("/stations", name="gas_stations")
      */
     public function gasStationsAction(Request $request)
     {
@@ -69,7 +69,7 @@ class GasController extends AbstractController
     }
 
     /**
-     * @Route("/gas_station/{id}", name="gas_station_id")
+     * @Route("/station/{id}", name="gas_station_id")
      * @ParamConverter("station", class="App\Entity\Gas\Station", options={"mapping": {"id": "id"}})
      */
     public function gasStationIdAction(Station $station)
@@ -86,7 +86,7 @@ class GasController extends AbstractController
     }
 
     /**
-     * @Route("/gas_station/{id}/comment", name="gas_station_id_comment")
+     * @Route("/station/{id}/comment/add", name="gas_station_id_comment")
      * @ParamConverter("station", class="App\Entity\Gas\Station", options={"mapping": {"id": "id"}})
      */
     public function gasStationIdCommentAction(Station $station, Request $request)
@@ -112,7 +112,7 @@ class GasController extends AbstractController
     }
 
     /**
-     * @Route("/gas_station/{id}/remove_comment", name="gas_station_id_remove_comment")
+     * @Route("/station/{id}/comment/remove", name="gas_station_id_remove_comment")
      * @ParamConverter("review", class="App\Entity\Review", options={"mapping": {"id": "id"}})
      */
     public function gasStationIdRemoveCommentAction(Review $review, Request $request)
@@ -128,7 +128,7 @@ class GasController extends AbstractController
     }
 
     /**
-     * @Route("/gas_type/{slug}", name="gas_type_id")
+     * @Route("/type/{slug}", name="gas_type_id")
      * @ParamConverter("type", class="App\Entity\Gas\Type", options={"mapping": {"slug": "slug"}})
      */
     public function gasTypeIdAction(Type $type)

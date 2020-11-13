@@ -278,6 +278,8 @@
                     return
                 }
 
+                marker.setIcon(normal)
+
                 if (!hasTypes(item) && (0 !== types.length)) {
                     map.removeLayer(marker)
                     return
@@ -312,13 +314,25 @@
             $('.gas_station_popup').remove()
 
             low_prices.forEach(function(element, index, array) {
-                var marker = markersIn[element[0]]
-                if (marker) {
-                    marker.setIcon(low)
-                    marker.setZIndexOffset(100)
+                if (types.length !== 0) {
+                    var id = element[2]
+                    id = id.toString()
+                    if (types.includes(id)) {
+                        addSpecialIcon(element)
+                    }
+                    return;
                 }
-                $('.' + element[0] + '.' + element[2]).css('color', 'green')
+                addSpecialIcon(element)
             })
+        }
+
+        function addSpecialIcon(element) {
+            var marker = markersIn[element[0]]
+            if (marker) {
+                marker.setIcon(low)
+                marker.setZIndexOffset(100)
+            }
+            $('.' + element[0] + '.' + element[2]).css('color', 'green')
         }
 
         function hasTypes(item) {
