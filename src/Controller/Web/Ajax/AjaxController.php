@@ -67,12 +67,13 @@ class AjaxController extends AbstractController
         $longitude = $request->query->get('longitude');
         $latitude = $request->query->get('latitude');
         $radius = $request->query->get('radius');
+        $filters = $request->query->get('filters') ?? [];
 
         if (is_null($longitude) || is_null($latitude) || is_null($radius)) {
             return new JsonResponse("Parameters are missing.", 400);
         }
 
-        return new JsonResponse($this->serializer->serialize($this->stationRepository->findGasStationMap($longitude, $latitude, $radius ), 'json', SerializationContext::create()->setGroups(["Ajax:GasStation"])), 200);
+        return new JsonResponse($this->serializer->serialize($this->stationRepository->findGasStationMap($longitude, $latitude, $radius, 500, $filters), 'json', SerializationContext::create()->setGroups(["Ajax:GasStation"])), 200);
     }
 
     /**

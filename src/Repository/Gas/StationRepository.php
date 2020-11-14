@@ -55,21 +55,34 @@ class StationRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findGasStationMap(float $longitude, float $latitude, float $radius, int $max = 500)
+    public function findGasStationMap(float $longitude, float $latitude, float $radius, int $max = 500, $filters = [])
     {
-        $query = "SELECT s.id as station_id, (SQRT(POW(69.1 * (a.latitude - $latitude), 2) + POW(69.1 * ($longitude - a.longitude) * COS(a.latitude / 57.3), 2))*1000) as distance
+        $where = ' AND s.is_closed IS FALSE';
+
+        if ((!empty($filters)) && isset($filters['departments'])) {
+            $ids = implode(',', $filters['departments']);
+            $where .= sprintf(' AND SUBSTRING(a.postal_code, 1, 2) IN (%s)', $ids);
+            $radius = 1000000000000000;
+            $max = 1000;
+        }
+
+        if ((!empty($filters)) && isset($filters['cities'])) {
+            $ids = implode(',', $filters['cities']);
+            $where .= sprintf(' AND a.postal_code IN (%s)', $ids);
+            $radius = 1000000000000000;
+            $max = 1000;
+        }
+
+        $query = "SELECT s.id as station_id, SUBSTRING(a.postal_code, 0, 2), (SQRT(POW(69.1 * (a.latitude - $latitude), 2) + POW(69.1 * ($longitude - a.longitude) * COS(a.latitude / 57.3), 2))*1000) as distance
                   FROM address a
                   INNER JOIN gas_station s ON s.address_id = a.id
-                  WHERE a.longitude IS NOT NULL AND a.latitude IS NOT NULL AND s.is_closed IS FALSE
+                  WHERE a.longitude IS NOT NULL AND a.latitude IS NOT NULL $where
                   HAVING `distance` < $radius
                   ORDER BY `distance` ASC LIMIT $max;";
 
         $statement = $this->getEntityManager()->getConnection()->prepare($query);
         $statement->execute();
         $stationIds = $statement->fetchAllAssociative();
-
-//        dump($stationIds);
-//        die;
 
         $ids = implode(',', array_map(function ($entry) {
             return $entry['station_id'];

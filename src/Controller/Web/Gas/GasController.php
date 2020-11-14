@@ -61,7 +61,6 @@ class GasController extends AbstractController
         return $this->render('gas/gas_stations.html.twig', [
             'KEY' => $this->dotEnv->load("KEY"),
             'gas_types' => $this->typeRepository->findAll(),
-            'sid' => $request->query->get('sid') ?? 0,
             'departments' => $this->stationUtil->getDepartments(),
             'gas_cities' => $this->addressRepository->findCityWithGasStation(),
             'gas_services' => $this->serviceRepository->findGasServiceById(),

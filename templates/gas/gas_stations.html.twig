@@ -23,6 +23,18 @@
                     </div>
                 </div>
 
+                <div class="ui form" id="city">
+                    <div class="field">
+                        <label for="cities">Liste des villes</label>
+                        <select multiple="multiple" id="cities" class="ui search dropdown">
+                            {% for city in gas_cities %}
+                                <option value="{{ city.postal_code }}">{{ city.city|trim('1234567890', 'left') }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
                 <div class="ui form" id="type">
                     <div class="field">
                         <label for="types">Types de carburants</label>
@@ -44,17 +56,6 @@
                         </select>
                     </div>
                 </div>
-                <div class="ui form" id="city">
-                    <div class="field">
-                        <label for="cities">Liste des villes</label>
-                        <select multiple="multiple" id="cities" class="ui search dropdown">
-                            {% for city in gas_cities %}
-                                <option value="{{ city.postal_code }}">{{ city.city|trim('1234567890', 'left') }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
 
                 <div class="ui form" id="reset">
                     <button class="ui google plus button">Reset</button>
@@ -63,20 +64,13 @@
         </div>
         <div id="map" class="gas_stations"></div>
     </div>
-{#    <div id="filters">#}
-{#        <label for="slide-menu-right" class="menu-button">Filtres</label>#}
-{#        <div class="slide-menu">#}
-{#            <input id="slide-menu-right" class="menu-toggle" type="checkbox"/>#}
-{#        </div>#}
-{#        <label for="slide-menu-right" class="menu-overlay"></label>#}
-{#    </div>#}
-{#    <div id="map" class="toto gas_stations"></div>#}
 {% endblock %}
 
 {% block javascripts %}
     <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
     <script>
-        const defaultCoordinate = {'latitude': 48.855680, 'longitude': 2.347045};
+        const defaultCoordinate = {'latitude': 48.855680, 'longitude': 2.347045}
+        var gLongitude, gLatitude, gRadius
         var map, infoWindow, markersIn = [], stations = [], object = {}, low_prices = {}, types = [], services = [], cities = [], departments = []
         var marker = 'marker'
 
@@ -84,7 +78,7 @@
 
         map.scrollWheelZoom.disable()
 
-        L.control.scale().addTo(map);
+        L.control.scale().addTo(map)
 
         L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             maxZoom: 18,
@@ -110,30 +104,16 @@
 
         map.locate({setView: true, maxZoom: 13})
 
-        function getGasStationId() {
-            $.get({
-                url: '{{ path('ajax_gas_station_id') }}',
-                type: 'GET',
-                async: true,
-                data: {'station_id': {{ sid }}},
-                success: function (element, statut) {
-                    $('.gas_station_popup').remove()
-                    var content = "<div class='gas_station_popup'><b class='gas_station_popup_close' onclick='$(\".gas_station_popup\").remove();'></b>" + element['content'] + "</div>"
-                    $('#gas_stations').append(content)
-                    $.each(low_prices, function(key, value) {
-                        $('.' + value[0] + '.' + value[2]).css('color', 'green')
-                    })
-                    map.setView([parseFloat(element['latitude']), parseFloat(element['longitude'])])
-                }
-            })
-        }
-
         function getGasStations(latitude, longitude, radius) {
+            gLongitude = longitude
+            gLatitude = latitude
+            gRadius = radius
+            filters = {'cities': cities, 'departments': departments};
             $.get({
                 url: '{{ path('ajax_gas_stations_map') }}',
                 type: 'GET',
                 async: true,
-                data: {'latitude': latitude, 'longitude': longitude, 'radius': radius - (radius/3)},
+                data: {'latitude': latitude, 'longitude': longitude, 'radius': radius - (radius/3), 'filters': filters},
                 success: function (elements, statut) {
                     markersIn = []
                     low_prices = {}
@@ -141,7 +121,8 @@
                         low_prices['{{ type.id }}'] = [null, 1000]
                     {% endfor %}
 
-                    group.clearLayers();
+                    group.clearLayers()
+
                     stations = JSON.parse(elements)
 
                     $.each(stations, function(index, element) {
@@ -171,17 +152,13 @@
         }
 
         map.on('locationfound', function (e) {
-            var radius = e.accuracy;
+            var radius = e.accuracy
             L.circle(e.latlng, radius).addTo(map)
             var marker = L.marker(e.latlng).addTo(map)
-            if ({{ sid }} == 0) {
-                marker.on('click', function(e) {
-                    map.setView([parseFloat(e.latlng.lat), parseFloat(e.latlng.lng)])
-                })
-                return false;
-            }
-
-            getGasStationId()
+            marker.on('click', function(e) {
+                map.setView([parseFloat(e.latlng.lat), parseFloat(e.latlng.lng)])
+            })
+            return false
         })
 
         map.on('locationerror', function (e) {
@@ -197,7 +174,7 @@
             var mapDistance = mapBoundNorthEast.distanceTo(map.getCenter())
 
             getGasStations(lat, lng, mapDistance)
-        });
+        })
 
         map.on('zoomend', function (e) {
             const { lat, lng } = e.target.getCenter()
@@ -207,7 +184,7 @@
             var mapDistance = mapBoundNorthEast.distanceTo(map.getCenter())
 
             getGasStations(lat, lng, mapDistance)
-        });
+        })
 
         $('.gas_station_popup_close').click(function () {
             $(".gas_station_popup").remove()
@@ -245,7 +222,7 @@
             action: 'activate',
             onChange: function (values, text, items) {
                 cities = values
-                filter()
+                getGasStations(gLatitude, gLongitude, gRadius)
             }
         })
 
@@ -253,7 +230,7 @@
             action: 'activate',
             onChange: function (values, text, items) {
                 departments = values
-                filter()
+                getGasStations(gLatitude, gLongitude, gRadius)
             }
         })
 
@@ -310,7 +287,7 @@
                 })
 
                 marker.addTo(group).addTo(map)
-            });
+            })
 
             $('.gas_station_popup').remove()
 
@@ -321,7 +298,7 @@
                     if (types.includes(id)) {
                         addSpecialIcon(element)
                     }
-                    return;
+                    return
                 }
                 addSpecialIcon(element)
             })
@@ -337,7 +314,7 @@
         }
 
         function hasTypes(item) {
-            var isAssociated = false;
+            var isAssociated = false
             $.each(item.prices, function (index, price) {
                 var id = price.type.id
                 id = id.toString()
@@ -350,7 +327,7 @@
         }
 
         function hasServices(item) {
-            var isAssociated = false;
+            var isAssociated = false
             $.each(item.services, function (index, service) {
                 var id = service.id
                 id = id.toString()
@@ -363,7 +340,7 @@
         }
 
         function hasCities(item) {
-            var isAssociated = false;
+            var isAssociated = false
             var id = item.address.postal_code
             id = id.toString()
             if (cities.includes(id)) {
@@ -374,7 +351,7 @@
         }
 
         function hasDepartments(item) {
-            var isAssociated = false;
+            var isAssociated = false
             var id = item.address.postal_code
             id = id.slice(0,2)
             if (departments.includes(id)) {
