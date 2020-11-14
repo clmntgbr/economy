@@ -9,67 +9,68 @@
 {% endblock %}
 
 {% block body %}
-    <div id="filters">
-        <label for="slide-menu-right" class="menu-button">Filtres</label>
-        <div class="slide-menu">
-            <input id="slide-menu-right" class="menu-toggle" type="checkbox"/>
-            <div class="menu-wrap">
-                <label for="slide-menu-right" class="menu-close" style="background-image: url('{{ asset('asset/img/close.png') }}')">Close</label>
-                <div class="menu-list">
+    <div class="row">
+        <div id="panel">
+            <div class="menu-list">
+                <div class="ui form" id="department">
+                    <div class="field">
+                        <label for="departments">Liste des départements</label>
+                        <select multiple="multiple" id="departments" class="ui search dropdown">
+                            {% for department in departments %}
+                                <option value="{{ department.1 }}">{{ department.0 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
 
-                    <div class="ui form" id="department">
-                        <div class="field">
-                            <label for="departments">Liste des départements</label>
-                            <select multiple="multiple" id="departments" class="ui search dropdown">
-                                {% for department in departments %}
-                                    <option value="{{ department.1 }}">{{ department.0 }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                <div class="ui form" id="type">
+                    <div class="field">
+                        <label for="types">Types de carburants</label>
+                        <select multiple="multiple" id="types" class="ui search dropdown">
+                            {% for type in gas_types %}
+                                <option value="{{ type.id }}">{{ type.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
+                </div>
 
-                    <div class="ui form" id="type">
-                        <div class="field">
-                            <label for="types">Types de carburants</label>
-                            <select multiple="multiple" id="types" class="ui search dropdown">
-                                {% for type in gas_types %}
-                                    <option value="{{ type.id }}">{{ type.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                <div class="ui form" id="service">
+                    <div class="field">
+                        <label for="services">Liste des services</label>
+                        <select multiple="multiple" id="services" class="ui search dropdown">
+                            {% for service in gas_services %}
+                                <option value="{{ service.id }}">{{ service.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
+                </div>
+                <div class="ui form" id="city">
+                    <div class="field">
+                        <label for="cities">Liste des villes</label>
+                        <select multiple="multiple" id="cities" class="ui search dropdown">
+                            {% for city in gas_cities %}
+                                <option value="{{ city.postal_code }}">{{ city.city|trim('1234567890', 'left') }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
 
-                    <div class="ui form" id="service">
-                        <div class="field">
-                            <label for="services">Liste des services</label>
-                            <select multiple="multiple" id="services" class="ui search dropdown">
-                                {% for service in gas_services %}
-                                    <option value="{{ service.id }}">{{ service.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="ui form" id="city">
-                        <div class="field">
-                            <label for="cities">Liste des villes</label>
-                            <select multiple="multiple" id="cities" class="ui search dropdown">
-                                {% for city in gas_cities %}
-                                    <option value="{{ city.postal_code }}">{{ city.city }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="ui form" id="reset">
-                        <button class="ui google plus button">Reset</button>
-                    </div>
+                <div class="ui form" id="reset">
+                    <button class="ui google plus button">Reset</button>
                 </div>
             </div>
         </div>
-        <label for="slide-menu-right" class="menu-overlay"></label>
+        <div id="map" class="gas_stations"></div>
     </div>
-    <div id="map" class="gas_stations"></div>
+{#    <div id="filters">#}
+{#        <label for="slide-menu-right" class="menu-button">Filtres</label>#}
+{#        <div class="slide-menu">#}
+{#            <input id="slide-menu-right" class="menu-toggle" type="checkbox"/>#}
+{#        </div>#}
+{#        <label for="slide-menu-right" class="menu-overlay"></label>#}
+{#    </div>#}
+{#    <div id="map" class="toto gas_stations"></div>#}
 {% endblock %}
 
 {% block javascripts %}
