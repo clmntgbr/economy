@@ -189,8 +189,8 @@ class AjaxController extends AbstractController
             $content .= sprintf("<p style='font-size: 12px;font-family:Raleway, sans-serif;margin:5px 0;font-weight: 500;padding: 2px 10px;'><i>%s</i></p>", $services);
         }
 
-        if (!is_null($station->getGooglePlace()->getGoogleRating())) {
-            $content .= $this->stationUtil->getGoogleRating($station->getGooglePlace()->getGoogleRating());
+        if (!is_null($station->getGooglePlace()->getRating())) {
+            $content .= $this->stationUtil->getRating($station->getGooglePlace()->getRating());
         }
 
         $content .= sprintf("<a href='%s' style='font-family:Raleway-Bold, sans-serif;font-size: 15px;width: auto;border-radius: 0 0 8px 8px;text-align: center;display: block;margin-top: 10px;background-color: #4f9c49;color: #fff;padding: 13px 0;'>Accèder à la fiche</a>", $stationRoute, "%");

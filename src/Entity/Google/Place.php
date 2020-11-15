@@ -115,6 +115,16 @@ class Place
      * @Serializer\Expose()
      * @Serializer\Groups(groups={"GooglePlace"})
      */
+    private $rating;
+
+    /**
+     * @var ?string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"GooglePlace"})
+     */
     private $reference;
 
     /**
@@ -284,6 +294,20 @@ class Place
         return $this;
     }
 
+    public function addUserRatingsTotal()
+    {
+        $this->userRatingsTotal = $this->userRatingsTotal + 1;
+
+        return $this;
+    }
+
+    public function subUserRatingsTotal()
+    {
+        $this->userRatingsTotal = $this->userRatingsTotal - 1;
+
+        return $this;
+    }
+
     public function getUserRatingsTotal(): ?string
     {
         return $this->userRatingsTotal;
@@ -352,6 +376,18 @@ class Place
     public function setOpeningHours(?array $openingHours): self
     {
         $this->openingHours = $openingHours;
+
+        return $this;
+    }
+
+    public function getRating(): ?string
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?string $rating): self
+    {
+        $this->rating = $rating;
 
         return $this;
     }

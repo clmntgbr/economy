@@ -88,6 +88,7 @@ class CreateGasStationGooglePlaceHandler implements MessageHandlerInterface
                 ->setCompoundCodeForGooglePlace($details['plus_code']['compound_code'] ?? null)
                 ->setGlobalCodeForGooglePlace($details['plus_code']['global_code'] ?? null)
                 ->setGoogleRatingForGooglePlace($details['rating'] ?? null)
+                ->setRatingForGooglePlace($details['rating'] ?? null)
                 ->setReferenceForGooglePlace($details['reference'] ?? null)
                 ->setOpeningHoursForGooglePlace($details['opening_hours']['weekday_text'] ?? null)
                 ->setUserRatingsTotalForGooglePlace($details['user_ratings_total'] ?? null)

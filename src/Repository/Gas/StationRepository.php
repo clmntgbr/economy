@@ -55,6 +55,25 @@ class StationRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findGasStationByReviewId(string $id): ?Station
+    {
+        $query = "SELECT p.station_id
+                  FROM gas_station_reviews p                  
+                  WHERE p.review_id = $id;";
+
+        $statement = $this->getEntityManager()->getConnection()->prepare($query);
+        $statement->execute();
+        $reviewId = $statement->fetchAssociative();
+
+        $query = $this->createQueryBuilder('s')
+            ->where('s.id = :id')
+            ->setParameter('id', $reviewId['station_id'] ?? null)
+            ->orderBy('s.id', 'ASC')
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
+
     public function findGasStationMap(float $longitude, float $latitude, float $radius, int $max = 500, $filters = [])
     {
         $where = ' AND s.is_closed IS FALSE';

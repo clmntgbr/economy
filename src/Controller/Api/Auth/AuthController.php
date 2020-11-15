@@ -100,7 +100,7 @@ class AuthController extends AbstractFOSRestController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $this->responseBody->create(Response::HTTP_CREATED, $user, []);
+        return $this->responseBody->create(Response::HTTP_CREATED, [$user], []);
     }
 
     /**

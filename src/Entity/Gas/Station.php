@@ -672,6 +672,13 @@ class Station
         return $this;
     }
 
+    public function setRatingForGooglePlace(?string $rating): self
+    {
+        $this->googlePlace->setRating($rating);
+
+        return $this;
+    }
+
     public function setReferenceForGooglePlace(?string $reference): self
     {
         $this->googlePlace->setReference($reference);

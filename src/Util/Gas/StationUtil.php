@@ -25,10 +25,10 @@ class StationUtil
         $this->router = $router;
     }
 
-    public function getGoogleRating($googleRating, string $ratingSize = 'huge', int $fontSize = 15): string
+    public function getRating($googleRating, string $ratingSize = 'huge', int $fontSize = 15): string
     {
         if(is_null($googleRating)) {
-            return '<i>there is no rating at this moment.</i>';
+            return '<i>Il n\'y a pas d\'avis pour le moment.</i>';
         }
 
         $value = (float)$googleRating;

@@ -34,4 +34,5 @@ services:
         class: App\Listener\Gas\StationListener
         tags:
             - { name: doctrine.event_listener, event: postLoad,  method: postLoad }
+            - { name: doctrine.event_listener, event: onFlush,  method: onFlush }
 
