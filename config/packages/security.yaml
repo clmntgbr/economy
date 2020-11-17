@@ -39,7 +39,9 @@ security:
             provider: app_user_provider
             guard:
                 authenticators:
-                    - App\Security\Guard\LoginFormAuthenticator
+                    - App\Security\Guard\AuthLoginAuthenticator
+                    - App\Security\Guard\OAuthGoogleAuthenticator
+                entry_point: App\Security\Guard\AuthLoginAuthenticator
             logout:
                 path: app_logout
                 target: app_login
@@ -53,4 +55,5 @@ security:
         - { path: ^/auth/authentication, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/web, roles: ROLE_USER }
         - { path: ^/auth/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/auth/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

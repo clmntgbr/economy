@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * @Route("/webapp")
+ * @Route("/web")
  * @IsGranted("ROLE_USER")
  */
 class AjaxController extends AbstractController
