@@ -22,11 +22,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class OAuthGoogleAuthenticator extends SocialAuthenticator
+class OAuthFacebookAuthenticator extends SocialAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'auth_google_callback';
+    public const LOGIN_ROUTE = 'auth_facebook_callback';
 
     /** @var ClientRegistry */
     private $clientRegistry;
@@ -59,17 +59,17 @@ class OAuthGoogleAuthenticator extends SocialAuthenticator
 
     public function getCredentials(Request $request): AccessToken
     {
-        return $this->fetchAccessToken($this->getGoogleClient());
+        return $this->fetchAccessToken($this->getFacebookClient());
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider): UserInterface
     {
-        $googleUser = $this->getGoogleClient()->fetchUserFromToken($credentials);
-        $googleUser = $googleUser->toArray();
+        $facebookUser = $this->getFacebookClient()->fetchUserFromToken($credentials);
+        $facebookUser = $facebookUser->toArray();
 
-        $email = $googleUser['email'];
+        $email = $facebookUser['email'];
 
-        $existingUser = $this->userRepository->findOneBy(['googleId' => $googleUser['sub']]);
+        $existingUser = $this->userRepository->findOneBy(['facebookId' => $facebookUser['id']]);
 
         if ($existingUser instanceof User) {
             return $existingUser;
@@ -83,14 +83,12 @@ class OAuthGoogleAuthenticator extends SocialAuthenticator
 
         $user = new User();
         $user->setEmail($email);
-        $user->setGoogleId($googleUser['sub']);
+        $user->setFacebookId($facebookUser['id']);
         $password = $this->passwordEncoder->encodePassword($user, uniqid());
         $user->setPassword($password);
-        $user->setGivenName($googleUser['given_name'] ?? null);
-        $user->setFamilyName($googleUser['family_name'] ?? null);
-        $user->setLocale($googleUser['locale'] ?? null);
-        $user->setEmailVerified($googleUser['email_verified'] ?? null);
-        $user->getAvatar()->setName($googleUser['picture'] ?? null);
+        $user->setGivenName($facebookUser['first_name'] ?? null);
+        $user->setFamilyName($facebookUser['last_name'] ?? null);
+        $user->getAvatar()->setName($facebookUser['picture_url'] ?? null);
         $user->getAvatar()->setPath(null);
         $user->getAvatar()->setMimeType(null);
         $user->getAvatar()->setSize(null);
@@ -102,9 +100,9 @@ class OAuthGoogleAuthenticator extends SocialAuthenticator
         return $user;
     }
 
-    private function getGoogleClient(): OAuth2ClientInterface
+    private function getFacebookClient(): OAuth2ClientInterface
     {
-        return $this->clientRegistry->getClient('google');
+        return $this->clientRegistry->getClient('facebook');
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): RedirectResponse

@@ -170,6 +170,9 @@
     "league/oauth2-client": {
         "version": "2.6.0"
     },
+    "league/oauth2-facebook": {
+        "version": "2.0.3"
+    },
     "league/oauth2-google": {
         "version": "3.0.3"
     },
