@@ -40,7 +40,7 @@ class Media
     /**
      * @var string
      *
-     * @ORM\Column(name="path", type="string")
+     * @ORM\Column(name="path", type="string", nullable=true)
      *
      * @Serializer\Expose()
      */
@@ -58,7 +58,7 @@ class Media
     /**
      * @var string
      *
-     * @ORM\Column(name="mime_type", type="string")
+     * @ORM\Column(name="mime_type", type="string", nullable=true)
      *
      * @Serializer\Expose()
      */
@@ -67,7 +67,7 @@ class Media
     /**
      * @var string
      *
-     * @ORM\Column(name="type", type="string")
+     * @ORM\Column(name="type", type="string", nullable=true)
      *
      * @Serializer\Expose()
      */
@@ -76,7 +76,7 @@ class Media
     /**
      * @var float
      *
-     * @ORM\Column(name="size", type="decimal")
+     * @ORM\Column(name="size", type="decimal", nullable=true)
      *
      * @Serializer\Expose()
      */
@@ -112,7 +112,7 @@ class Media
         return $this->path;
     }
 
-    public function setPath(string $path): self
+    public function setPath(?string $path): self
     {
         $this->path = $path;
 
@@ -136,7 +136,7 @@ class Media
         return $this->mimeType;
     }
 
-    public function setMimeType(string $mimeType): self
+    public function setMimeType(?string $mimeType): self
     {
         $this->mimeType = $mimeType;
 
@@ -148,7 +148,7 @@ class Media
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
 
@@ -160,7 +160,7 @@ class Media
         return $this->size;
     }
 
-    public function setSize(string $size): self
+    public function setSize(?string $size): self
     {
         $this->size = $size;
 

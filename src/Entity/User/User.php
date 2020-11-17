@@ -63,6 +63,31 @@ class User implements UserInterface
     private $password;
 
     /**
+     * @ORM\Column(type="string", length=180, unique=true, nullable=true)
+     */
+    private $googleId;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $givenName;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $familyName;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $emailVerified;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $locale;
+
+    /**
      * @ORM\Column(type="boolean")
      *
      * @Serializer\Expose()
@@ -228,6 +253,66 @@ class User implements UserInterface
     public function setAvatar(?Media $avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getGoogleId(): ?string
+    {
+        return $this->googleId;
+    }
+
+    public function setGoogleId(?string $googleId): self
+    {
+        $this->googleId = $googleId;
+
+        return $this;
+    }
+
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
+
+    public function setGivenName(?string $givenName): self
+    {
+        $this->givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    public function getEmailVerified(): ?bool
+    {
+        return $this->emailVerified;
+    }
+
+    public function setEmailVerified(?bool $emailVerified): self
+    {
+        $this->emailVerified = $emailVerified;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): self
+    {
+        $this->locale = $locale;
 
         return $this;
     }
