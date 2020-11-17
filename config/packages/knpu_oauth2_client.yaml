@@ -13,3 +13,9 @@ knpu_oauth2_client:
             redirect_route: auth_facebook_callback
             redirect_params: {}
             graph_api_version: v3.2
+        linkedin:
+            type: linkedin
+            client_id: '%env(OAUTH_LINKEDIN_ID)%'
+            client_secret: '%env(OAUTH_LINKEDIN_SECRET)%'
+            redirect_route: auth_linkedin_callback
+            redirect_params: {}

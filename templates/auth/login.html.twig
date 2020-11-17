@@ -12,6 +12,11 @@
         Facebook
     </a>
 
+
+    <a href="{{ path('auth_linkedin') }}">
+        Linkedin
+    </a>
+
     <form method="post">
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
