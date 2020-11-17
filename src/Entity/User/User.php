@@ -73,6 +73,11 @@ class User implements UserInterface
     private $facebookId;
 
     /**
+     * @ORM\Column(type="string", length=180, unique=true, nullable=true)
+     */
+    private $linkedinId;
+
+    /**
      * @ORM\Column(type="string", nullable=true)
      */
     private $givenName;
@@ -330,6 +335,18 @@ class User implements UserInterface
     public function setFacebookId(?string $facebookId): self
     {
         $this->facebookId = $facebookId;
+
+        return $this;
+    }
+
+    public function getLinkedinId(): ?string
+    {
+        return $this->linkedinId;
+    }
+
+    public function setLinkedinId(?string $linkedinId): self
+    {
+        $this->linkedinId = $linkedinId;
 
         return $this;
     }
