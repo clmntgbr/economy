@@ -20,6 +20,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "jms/serializer-bundle": "^3.7",
         "knpuniversity/oauth2-client-bundle": "^2.5",
+        "league/oauth2-facebook": "^2.0",
         "league/oauth2-google": "^3.0",
         "lexik/jwt-authentication-bundle": "^2.8",
         "sensio/framework-extra-bundle": "^5.6",

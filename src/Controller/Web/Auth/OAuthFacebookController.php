@@ -10,20 +10,20 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/auth")
  */
-class OAuthGoogleController extends AbstractController
+class OAuthFacebookController extends AbstractController
 {
     /**
-     * @Route("/google", name="auth_google")
+     * @Route("/facebook", name="auth_facebook")
      */
     public function connectAction(ClientRegistry $clientRegistry)
     {
         return $clientRegistry
-            ->getClient('google')
-            ->redirect(['profile', 'email'], []);
+            ->getClient('facebook')
+            ->redirect(['public_profile', 'email'], []);
     }
 
     /**
-     * @Route("/google/callback", name="auth_google_callback")
+     * @Route("/facebook/callback", name="auth_facebook_callback")
      */
     public function connectCallbackAction(Request $request, ClientRegistry $clientRegistry)
     {

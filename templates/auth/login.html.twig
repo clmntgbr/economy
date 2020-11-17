@@ -7,6 +7,11 @@
         Google
     </a>
 
+
+    <a href="{{ path('auth_facebook') }}">
+        Facebook
+    </a>
+
     <form method="post">
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
