@@ -19,6 +19,27 @@ html, body {
   font-family: Raleway, sans-serif;
 }
 
+#header {
+  height: 70px;
+  width: 100%;
+  border-bottom: 1px solid #d4d4d5;
+  position: fixed;
+  z-index: 111111;
+  background-color: rgb(255 255 255);
+}
+
+#header .user {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.body {
+  top: 70px;
+  height: calc(100% - 70px);
+}
+
 #gas_stations {
   position: relative;
 }
@@ -30,7 +51,7 @@ html, body {
   background-color: #fff;
   z-index: 1111111111;
   position: fixed;
-  top: 10px;
+  top: 80px;
   right: 10px;
   -webkit-box-shadow: -7px 7px 20px -10px rgba(0,0,0,0.75);
   -moz-box-shadow: -7px 7px 20px -10px rgba(0,0,0,0.75);
@@ -305,18 +326,19 @@ input[name="comment[rating]"] {
 #gas_stations #panel {
   z-index: 11111;
   width: 300px;
-  height: 100vh;
+  height: 100%;
+  position: fixed;
   display: inline-block;
-  padding: 10px 20px;
-  -webkit-box-shadow: 7px 0px 14px -10px rgba(0,0,0,0.75);
-  -moz-box-shadow: 7px 0px 14px -10px rgba(0,0,0,0.75);
-  box-shadow: 7px 0px 14px -10px rgba(0,0,0,0.75);
+  padding: 0 20px 10px 20px;
+  border-right: 1px solid #d4d4d5;
 }
 
 #gas_stations #map {
   width: calc(100% - 300px);
-  height: 100vh;
+  height: 100%;
   display: inline-block;
+  left: 300px;
+  position: absolute;
 }
 
 #gas_stations .ui.form {

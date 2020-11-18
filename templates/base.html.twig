@@ -17,10 +17,25 @@
     </head>
     <body>
 
+        {% if app.user.avatar.path is null %}
+            {% set avatar =  app.user.avatar.name %}
+        {% else %}
+            {% set avatar = asset(app.user.avatar.path ~ app.user.avatar.name) %}
+        {% endif %}
+
         <header id="header">
+            <div class="ui horizontal list user">
+                <div class="item">
+                    <img class="ui mini circular image" src="{{ avatar }}">
+                    <div class="content">
+                        <div class="ui sub header">{{ app.user.getGivenName }}</div>
+                        {{ app.user.getFamilyName }}
+                    </div>
+                </div>
+            </div>
         </header>
 
-        <section id="{{ app.request.attributes.get("_route") }}">
+        <section id="{{ app.request.attributes.get("_route") }}" class="body">
             {% block body %}
             {% endblock %}
         </section>

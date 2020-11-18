@@ -43,7 +43,6 @@ security:
                     - App\Security\Guard\Social\AuthGoogleAuthenticator
                     - App\Security\Guard\Social\AuthFacebookAuthenticator
                     - App\Security\Guard\Social\AuthLinkedinAuthenticator
-                    - App\Security\Guard\Social\AuthAppleAuthenticator
                 entry_point: App\Security\Guard\AuthLoginAuthenticator
             logout:
                 path: app_logout

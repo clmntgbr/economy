@@ -143,7 +143,7 @@ class User implements UserInterface
     /**
      * @var Media
      *
-     * @ORM\OneToOne(targetEntity="App\Entity\Media", cascade={"persist", "remove"}, fetch="EXTRA_LAZY")
+     * @ORM\OneToOne(targetEntity="App\Entity\Media", cascade={"persist", "remove"}, fetch="EAGER")
      * @ORM\JoinColumn(name="avatar_id", referencedColumnName="id", nullable=true)
      */
     private $avatar;

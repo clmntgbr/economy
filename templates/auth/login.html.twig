@@ -17,11 +17,6 @@
         Linkedin
     </a>
 
-
-    <a href="{{ path('auth_apple') }}">
-        Apple
-    </a>
-
     <form method="post">
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>

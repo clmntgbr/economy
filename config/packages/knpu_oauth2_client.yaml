@@ -19,11 +19,3 @@ knpu_oauth2_client:
             client_secret: '%env(OAUTH_LINKEDIN_SECRET)%'
             redirect_route: auth_linkedin_callback
             redirect_params: {}
-        apple:
-            type: apple
-            client_id: '%env(OAUTH_APPLE_ID)%'
-            team_id: '%env(OAUTH_APPLE_SECRET)%'
-            redirect_route: auth_apple_callback
-            redirect_params: {}
-            key_file_id: null
-            key_file_path: null
