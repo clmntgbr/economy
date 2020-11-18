@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Web\Auth;
+namespace App\Controller\Web\Auth\Social;
 
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,20 +10,20 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/auth")
  */
-class OAuthGoogleController extends AbstractController
+class AuthAppleController extends AbstractController
 {
     /**
-     * @Route("/google", name="auth_google")
+     * @Route("/apple", name="auth_apple")
      */
     public function connectAction(ClientRegistry $clientRegistry)
     {
         return $clientRegistry
-            ->getClient('google')
-            ->redirect(['profile', 'email'], []);
+            ->getClient('apple')
+            ->redirect(['name', 'email'], []);
     }
 
     /**
-     * @Route("/google/callback", name="auth_google_callback")
+     * @Route("/apple/callback", name="auth_apple_callback")
      */
     public function connectCallbackAction(Request $request, ClientRegistry $clientRegistry)
     {

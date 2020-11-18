@@ -40,9 +40,10 @@ security:
             guard:
                 authenticators:
                     - App\Security\Guard\AuthLoginAuthenticator
-                    - App\Security\Guard\OAuthGoogleAuthenticator
-                    - App\Security\Guard\OAuthFacebookAuthenticator
-                    - App\Security\Guard\OAuthLinkedinAuthenticator
+                    - App\Security\Guard\Social\AuthGoogleAuthenticator
+                    - App\Security\Guard\Social\AuthFacebookAuthenticator
+                    - App\Security\Guard\Social\AuthLinkedinAuthenticator
+                    - App\Security\Guard\Social\AuthAppleAuthenticator
                 entry_point: App\Security\Guard\AuthLoginAuthenticator
             logout:
                 path: app_logout

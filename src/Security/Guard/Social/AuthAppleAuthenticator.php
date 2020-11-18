@@ -1,8 +1,6 @@
 <?php
 
-
-namespace App\Security\Guard;
-
+namespace App\Security\Guard\Social;
 
 use App\Entity\User\User;
 use App\Repository\User\UserRepository;
@@ -22,11 +20,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class OAuthLinkedinAuthenticator extends SocialAuthenticator
+class AuthAppleAuthenticator extends SocialAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'auth_linkedin_callback';
+    public const LOGIN_ROUTE = 'auth_apple_callback';
 
     /** @var ClientRegistry */
     private $clientRegistry;
@@ -59,17 +57,20 @@ class OAuthLinkedinAuthenticator extends SocialAuthenticator
 
     public function getCredentials(Request $request): AccessToken
     {
-        return $this->fetchAccessToken($this->getLinkedinClient());
+        return $this->fetchAccessToken($this->getAppleClient());
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider): UserInterface
     {
-        $linkedinUser = $this->getLinkedinClient()->fetchUserFromToken($credentials);
-        $linkedinUser = $linkedinUser->toArray();
+        $appleUser = $this->getAppleClient()->fetchUserFromToken($credentials);
+        $appleUser = $appleUser->toArray();
 
-        $email = $linkedinUser['email'];
+        dump($appleUser);
+        die;
 
-        $existingUser = $this->userRepository->findOneBy(['linkedinId' => $linkedinUser['id']]);
+        $email = $appleUser['email'];
+
+        $existingUser = $this->userRepository->findOneBy(['googleId' => $appleUser['sub']]);
 
         if ($existingUser instanceof User) {
             return $existingUser;
@@ -83,13 +84,18 @@ class OAuthLinkedinAuthenticator extends SocialAuthenticator
 
         $user = new User();
         $user->setEmail($email);
-        $user->setLinkedinId($linkedinUser['id']);
+        $user->setGoogleId($appleUser['sub']);
         $password = $this->passwordEncoder->encodePassword($user, uniqid());
         $user->setPassword($password);
-        $user->setGivenName($linkedinUser['localizedFirstName'] ?? null);
-        $user->setFamilyName($linkedinUser['localizedLastName'] ?? null);
-        $user->setLocale($linkedinUser['firstName']['preferredLocale']['language'] ?? null);
-        $this->getLinkedinPicture($linkedinUser, $user);
+        $user->setGivenName($appleUser['given_name'] ?? null);
+        $user->setFamilyName($appleUser['family_name'] ?? null);
+        $user->setLocale($appleUser['locale'] ?? null);
+        $user->setEmailVerified($appleUser['email_verified'] ?? null);
+        $user->getAvatar()->setName($appleUser['picture'] ?? null);
+        $user->getAvatar()->setPath(null);
+        $user->getAvatar()->setMimeType(null);
+        $user->getAvatar()->setSize(null);
+        $user->getAvatar()->setType(null);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -97,28 +103,9 @@ class OAuthLinkedinAuthenticator extends SocialAuthenticator
         return $user;
     }
 
-    private function getLinkedinPicture(array $linkedinUser, User $user)
+    private function getAppleClient(): OAuth2ClientInterface
     {
-        if (isset($linkedinUser['profilePicture']['displayImage~']['elements']) && count($linkedinUser['profilePicture']['displayImage~']['elements'])>0) {
-            foreach ($linkedinUser['profilePicture']['displayImage~']['elements'] as $item) {
-                if (isset($item['identifiers']) && count($item['identifiers'])>0) {
-                    foreach ($item['identifiers'] as $identifier) {
-                        $user->getAvatar()->setName($identifier['identifier'] ?? null);
-                        $user->getAvatar()->setPath(null);
-                        $user->getAvatar()->setMimeType(null);
-                        $user->getAvatar()->setSize(null);
-                        $user->getAvatar()->setType($identifier['mediaType'] ?? null);
-                        return;
-                    }
-                }
-            }
-        }
-        return;
-    }
-
-    private function getLinkedinClient(): OAuth2ClientInterface
-    {
-        return $this->clientRegistry->getClient('linkedin');
+        return $this->clientRegistry->getClient('google');
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): RedirectResponse

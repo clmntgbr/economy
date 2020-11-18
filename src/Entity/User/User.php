@@ -64,26 +64,41 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true, nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $googleId;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true, nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $facebookId;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true, nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $linkedinId;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $givenName;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $familyName;
 
@@ -94,6 +109,9 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
      */
     private $locale;
 
@@ -104,6 +122,14 @@ class User implements UserInterface
      * @Serializer\Groups(groups={"User"})
      */
     private $isActive;
+
+    /**
+     * @ORM\Column(type="boolean")
+     *
+     * @Serializer\Expose()
+     * @Serializer\Groups(groups={"User"})
+     */
+    private $isEnable;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Gas\Station")
@@ -126,6 +152,7 @@ class User implements UserInterface
     {
         $this->roles = ['ROLE_USER'];
         $this->isActive = true;
+        $this->isEnable = true;
         $this->avatar = new Media('asset/img/', 'img_avatar.png', 'image/png', 'png', 0);
         $this->gasStationsLikes = new ArrayCollection();
     }
@@ -347,6 +374,18 @@ class User implements UserInterface
     public function setLinkedinId(?string $linkedinId): self
     {
         $this->linkedinId = $linkedinId;
+
+        return $this;
+    }
+
+    public function getIsEnable(): ?bool
+    {
+        return $this->isEnable;
+    }
+
+    public function setIsEnable(bool $isEnable): self
+    {
+        $this->isEnable = $isEnable;
 
         return $this;
     }
