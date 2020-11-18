@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Web\Auth;
+namespace App\Controller\Web\Auth\Social;
 
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,20 +10,20 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/auth")
  */
-class OAuthFacebookController extends AbstractController
+class AuthLinkedinController extends AbstractController
 {
     /**
-     * @Route("/facebook", name="auth_facebook")
+     * @Route("/linkedin", name="auth_linkedin")
      */
     public function connectAction(ClientRegistry $clientRegistry)
     {
         return $clientRegistry
-            ->getClient('facebook')
-            ->redirect(['public_profile', 'email'], []);
+            ->getClient('linkedin')
+            ->redirect([], []);
     }
 
     /**
-     * @Route("/facebook/callback", name="auth_facebook_callback")
+     * @Route("/linkedin/callback", name="auth_linkedin_callback")
      */
     public function connectCallbackAction(Request $request, ClientRegistry $clientRegistry)
     {
