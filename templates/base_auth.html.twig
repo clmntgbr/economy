@@ -17,6 +17,14 @@
 </head>
 <body>
 
+{% for message in app.flashes('success') %}
+    <div class="ui positive small message base"><i class="close icon"></i><div class="header">{{ message|raw }}</div></div>
+{% endfor %}
+
+{% for message in app.flashes('error') %}
+    <div class="ui negative small message base"><i class="close icon"></i><div class="header">{{ message|raw }}</div></div>
+{% endfor %}
+
 <section id="{{ app.request.attributes.get("_route") }}">
     {% block body %}
     {% endblock %}
@@ -28,6 +36,11 @@
 <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
 <script type="application/javascript" src="{{ asset('asset/semantic/semantic.min.js') }}"></script>
 
+<script type="text/javascript">
+    $('.message.base .close').click(function () {
+        $('.message.base').remove()
+    })
+</script>
 {% block javascripts %}
 {% endblock %}
 </body>

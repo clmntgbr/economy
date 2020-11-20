@@ -35,7 +35,7 @@ class ResponseBody
         return View::create($this->template($code, $data, $errors), $code, []);
     }
 
-    static function getValidatorErrors(ConstraintViolationListInterface $violationList)
+    static function getValidatorErrors(ConstraintViolationListInterface $violationList): array
     {
         $errors = [];
 
@@ -44,6 +44,18 @@ class ResponseBody
         }
 
         return $errors;
+    }
+
+    static function getValidatorErrorsToHTML(ConstraintViolationListInterface $violationList): string
+    {
+        $errors = self::getValidatorErrors($violationList);
+
+        $message = "";
+        foreach ($errors as $error) {
+            $message .= sprintf("%s<br>", str_replace('value', $error['property'], $error['message']));
+        }
+
+        return $message;
     }
 
     static function getErrorsFormatted(string $property, string $message)

@@ -68,7 +68,7 @@
 
 {% block javascripts %}
     <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-    <script>
+    <script  type="application/javascript">
         var gas_stations_limit_cookie = $.cookie('gas_stations_limit_cookie');
         if (gas_stations_limit_cookie === undefined) {
             $.cookie('gas_stations_limit_cookie', uniqid(), { expires: 31, path: '/' });
@@ -79,7 +79,7 @@
             $('.gas_stations_limit').remove()
         })
     </script>
-    <script>
+    <script  type="application/javascript">
         const defaultCoordinate = {'latitude': 48.855680, 'longitude': 2.347045}
         var gLongitude, gLatitude, gRadius
         var map, infoWindow, markersIn = [], stations = [], object = {}, low_prices = {}, types = [], services = [], cities = [], departments = []

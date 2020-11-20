@@ -18,6 +18,14 @@
 </head>
 <body>
 
+{% for message in app.flashes('success') %}
+    <div class="ui positive small message base"><i class="close icon"></i><div class="header">{{ message|raw }}</div></div>
+{% endfor %}
+
+{% for message in app.flashes('error') %}
+    <div class="ui negative small message base"><i class="close icon"></i><div class="header">{{ message|raw }}</div></div>
+{% endfor %}
+
 {% if app.user.avatar.path is null %}
     {% set avatar =  app.user.avatar.name %}
 {% else %}
@@ -58,9 +66,14 @@
     if (window.location.hash && window.location.hash == '#_=_') {
         window.location.hash = '';
     }
+
+    $('.message.base .close').click(function () {
+        $('.message.base').remove()
+    })
+
 </script>
 
-<script>
+<script type="text/javascript">
     $('.ui.user.dropdown').dropdown({
         action: 'select'
     });
