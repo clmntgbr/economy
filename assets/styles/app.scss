@@ -309,6 +309,24 @@ html, body {
   }
 }
 
+#auth_reset_password {
+  background-color: #fff!important;
+  width: 100%;
+  height: 100%;
+}
+
+#auth_reset_token {
+  background-color: #fff!important;
+  width: 100%;
+  height: 100%;
+}
+
+#auth_reset_email {
+  background-color: #fff!important;
+  width: 100%;
+  height: 100%;
+}
+
 @media (max-width: 575px) {
   #app_gas_station_id .information, #app_gas_station_id .prices {
     padding: 10px !important

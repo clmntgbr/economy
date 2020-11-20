@@ -189,6 +189,7 @@ class AuthController extends AbstractController
         }
 
         $form = $this->createForm(ChangePasswordFormType::class);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -206,6 +207,14 @@ class AuthController extends AbstractController
 
             $this->addFlash('success', 'Votre mot de passe à bien été changé.');
             return $this->redirectToRoute('auth_login');
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $message = '';
+            foreach ($form->getErrors(true) as $error) {
+                $message .= sprintf("%s<br>", $error->getMessage());
+            }
+            $this->addFlash('error', $message);
         }
 
         return $this->render('auth/reset_token.html.twig', [
