@@ -26,8 +26,8 @@ class GasPriceCommand extends Command
 {
     protected static $defaultName = 'app:gas-price';
 
-    const PATH = "public/gas/";
-    const FILENAME = "gas-price.zip";
+    const PATH = 'public/gas/';
+    const FILENAME = 'gas-price.zip';
 
     /** @var StationRepository */
     private $stationRepository;
@@ -85,7 +85,7 @@ class GasPriceCommand extends Command
         $this->dotEnv = $dotEnv;
         $this->messageBus = $messageBus;
         $this->command = $command;
-        $this->gasURL = $this->dotEnv->load("GAS_URL");
+        $this->gasURL = $this->dotEnv->load('GAS_URL');
         $this->stations = [];
         $this->types = [];
         $this->services = [];

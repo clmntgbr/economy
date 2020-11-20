@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/web/user")
+ * @Route("/app/user", name="app_")
  * @IsGranted("ROLE_USER")
  */
 class UserController extends AbstractController

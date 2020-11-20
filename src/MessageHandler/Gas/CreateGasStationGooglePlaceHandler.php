@@ -134,7 +134,7 @@ class CreateGasStationGooglePlaceHandler implements MessageHandlerInterface
     {
         foreach (Media::GAS_STATION_IMG as $key => $item) {
             if (false !== strpos(strtolower(FileSystem::stripAccents($station->getName())), $key)) {
-                $media = new Media(Media::PUBLIC_GAS_STATION_IMG, $item, "image/jpg","jpg",0);
+                $media = new Media(Media::PUBLIC_GAS_STATION_IMG, $item, 'image/jpg','jpg',0);
                 $station->setPreview($media);
                 break(1);
             }

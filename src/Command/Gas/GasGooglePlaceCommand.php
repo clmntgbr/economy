@@ -75,7 +75,7 @@ class GasGooglePlaceCommand extends Command
             }
 
             $interests = [];
-            $nearBy = $this->apiPlace->nearbysearch($value['longitude'], $value['latitude'], "gas_station");
+            $nearBy = $this->apiPlace->nearbysearch($value['longitude'], $value['latitude'], 'gas_station');
 
             if ($nearBy === false) {
                 $progressBar->advance();
@@ -100,7 +100,7 @@ class GasGooglePlaceCommand extends Command
             $similarText = [];
 
             foreach ($interests as $distance => $interest) {
-                similar_text($this->slugify->slugify(sprintf("%s, %s", $value['street'], $value['city'])), $this->slugify->slugify($interest['vicinity']), $percent);
+                similar_text($this->slugify->slugify(sprintf('%s, %s', $value['street'], $value['city'])), $this->slugify->slugify($interest['vicinity']), $percent);
                 if (85 <= $percent) {
                     $similarText[(string)$percent] = ['details' => $interest, 'distance' => $distance];
                 }

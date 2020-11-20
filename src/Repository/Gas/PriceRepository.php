@@ -21,10 +21,10 @@ class PriceRepository extends ServiceEntityRepository
 
     public function findMaxDatePricesGroupByStationAndType()
     {
-        $sql = "SELECT p.station_id, p.type_id, MAX(p.date) as date 
+        $sql = 'SELECT p.station_id, p.type_id, MAX(p.date) as date 
                 FROM gas_price p 
                 GROUP BY p.station_id, p.type_id 
-                ORDER BY p.station_id ASC";
+                ORDER BY p.station_id ASC';
 
         $statement = $this->getEntityManager()->getConnection()->prepare($sql);
         $statement->execute();

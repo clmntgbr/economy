@@ -93,11 +93,11 @@ class GasController extends AbstractController
         $comment = $request->request->get("comment");
 
         if (is_null($comment)) {
-            return $this->redirectToRoute('gas_station_id', ['id' => $station->getId()], 400);
+            return $this->redirectToRoute('app_gas_station_id', ['id' => $station->getId()], 400);
         }
 
         if (!isset($comment['rating']) || !isset($comment['body']) || is_null($comment['rating']) || is_null($comment['body'])) {
-            return $this->redirectToRoute('gas_station_id', ['id' => $station->getId()], 400);
+            return $this->redirectToRoute('app_gas_station_id', ['id' => $station->getId()], 400);
         }
 
         $station->addReview(
@@ -107,7 +107,7 @@ class GasController extends AbstractController
         $this->entityManager->persist($station);
         $this->entityManager->flush();
 
-        return $this->redirectToRoute('gas_station_id', ['id' => $station->getId()]);
+        return $this->redirectToRoute('app_gas_station_id', ['id' => $station->getId()]);
     }
 
     /**

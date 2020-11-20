@@ -132,7 +132,7 @@ class AjaxController extends AbstractController
 
     private function createGasStationContent(Station $station): array
     {
-        $stationRoute = $this->router->generate("gas_station_id", ['id' => $station->getId()]);
+        $stationRoute = $this->router->generate("app_gas_station_id", ['id' => $station->getId()]);
 
         $types = $this->typeRepository->findBy([], ['id' => 'ASC']);
 
@@ -163,7 +163,7 @@ class AjaxController extends AbstractController
         $prices = $this->priceRepository->findGasPricesBeforeByStationId($station->getId(), $ids);
 
         foreach ($types as $type) {
-            $typeRoute = $this->router->generate("gas_type_id", ['slug' => $type->getSlug()]);
+            $typeRoute = $this->router->generate("app_gas_type_id", ['slug' => $type->getSlug()]);
             foreach ($station->getLastPricesEntities() as $price) {
                 if ($price->getType()->getId() == $type->getId()) {
                     if (isset($prices[$type->getId()])) {

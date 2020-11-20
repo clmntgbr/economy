@@ -100,7 +100,7 @@ class GasStationClosedCommand extends Command
         $progressBar = new ProgressBar($output, count($this->stations));
 
         foreach ($this->stations as $station) {
-            if ("0" == $station['count'] && "0" == $station['is_closed'] && (!(isset($stationFound[$station['station_id']])))) {
+            if ('0' == $station['count'] && '0' == $station['is_closed'] && (!(isset($stationFound[$station['station_id']])))) {
                 $this->messageBus->dispatch(new ClosedGasStation($station['station_id'], $station['date']));
                 $this->logger['stations']++;
             }

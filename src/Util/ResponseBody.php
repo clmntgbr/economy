@@ -16,7 +16,7 @@ class ResponseBody
         $this->serializer = $serializer;
     }
 
-    const WRONG_PASSWORD = "Incorrect Password.";
+    const WRONG_PASSWORD = 'Incorrect Password.';
     const USER_NOT_FOUND = "User '%s' doesn't exist.";
 
     private function template(int $code, $data, $errors)

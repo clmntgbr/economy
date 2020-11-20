@@ -23,8 +23,8 @@ class GasPriceYearCommand extends Command
 {
     protected static $defaultName = 'app:gas-price-year';
 
-    const PATH = "public/gas/year/";
-    const FILENAME = "PrixCarburants_annuel_%s.zip";
+    const PATH = 'public/gas/year/';
+    const FILENAME = 'PrixCarburants_annuel_%s.zip';
     const START_YEAR = 2015;
     const END_YEAR = 2019;
 
