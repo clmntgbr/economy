@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>{% block title %}Economy - {% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('asset/semantic/semantic.min.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+
+    <script async defer src="https://kit.fontawesome.com/cd91c1afff.js"></script>
+
+    {{ encore_entry_link_tags('app') }}
+
+    {% block stylesheets %}
+    {% endblock %}
+</head>
+<body>
+
+<section id="{{ app.request.attributes.get("_route") }}">
+    {% block body %}
+    {% endblock %}
+</section>
+
+<footer id="footer">
+</footer>
+
+<script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script type="application/javascript" src="{{ asset('asset/semantic/semantic.min.js') }}"></script>
+
+{% block javascripts %}
+{% endblock %}
+</body>
+</html>

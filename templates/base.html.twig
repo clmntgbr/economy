@@ -1,52 +1,73 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <base href="/">
-        <title>{% block title %}Economy - {% endblock %}</title>
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>{% block title %}Economy - {% endblock %}</title>
 
-        <link rel="stylesheet" type="text/css" href="{{ asset('asset/semantic/semantic.min.css') }}"/>
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('asset/semantic/semantic.min.css') }}"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
 
-        <script async defer src="https://kit.fontawesome.com/cd91c1afff.js"></script>
+    <script async defer src="https://kit.fontawesome.com/cd91c1afff.js"></script>
 
-        {{ encore_entry_link_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
 
-        {% block stylesheets %}
-        {% endblock %}
-    </head>
-    <body>
+    {% block stylesheets %}
+    {% endblock %}
+</head>
+<body>
 
-        {% if app.user.avatar.path is null %}
-            {% set avatar =  app.user.avatar.name %}
-        {% else %}
-            {% set avatar = asset(app.user.avatar.path ~ app.user.avatar.name) %}
-        {% endif %}
+{% if app.user.avatar.path is null %}
+    {% set avatar =  app.user.avatar.name %}
+{% else %}
+    {% set avatar = asset(app.user.avatar.path ~ app.user.avatar.name) %}
+{% endif %}
 
-        <header id="header">
-            <div class="ui horizontal list user">
-                <div class="item">
-                    <img class="ui mini circular image" src="{{ avatar }}">
-                    <div class="content">
-                        <div class="ui sub header">{{ app.user.getGivenName }}</div>
-                        {{ app.user.getFamilyName }}
-                    </div>
-                </div>
+<header id="header">
+    <div class="ui horizontal list user dropdown">
+        <div class="item">
+            <img class="ui mini circular image" src="{{ avatar }}">
+            <div class="content">
+                <div class="ui sub header">{{ app.user.getGivenName }}</div>
+                {{ app.user.getFamilyName }}
             </div>
-        </header>
+            <i class="dropdown icon"></i>
+        </div>
+        <div class="menu user">
+            <a class="item" href="{{ path('user_account') }}">
+                Mon Compte
+            </a>
+        </div>
+    </div>
+</header>
 
-        <section id="{{ app.request.attributes.get("_route") }}" class="body">
-            {% block body %}
-            {% endblock %}
-        </section>
+<section id="{{ app.request.attributes.get("_route") }}" class="body">
+    {% block body %}
+    {% endblock %}
+</section>
 
-        <footer id="footer">
-        </footer>
+<footer id="footer">
+</footer>
 
-        <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
-        <script type="application/javascript" src="{{ asset('asset/semantic/semantic.min.js') }}"></script>
+<script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script type="application/javascript" src="{{ asset('asset/semantic/semantic.min.js') }}"></script>
+<script type="application/javascript" src="{{ asset('asset/js/jquery.cookie.js') }}"></script>
 
-        {% block javascripts %}
-        {% endblock %}
-    </body>
+<script>
+    $('.ui.user.dropdown').dropdown({
+        action: 'select'
+    });
+
+    function uniqid() {
+        var ts=String(new Date().getTime()), i = 0, out = '';
+        for(i=0;i<ts.length;i+=2) {
+            out+=Number(ts.substr(i, 2)).toString(36);
+        }
+        return ('d'+out);
+    }
+</script>
+{% block javascripts %}
+{% endblock %}
+</body>
 </html>

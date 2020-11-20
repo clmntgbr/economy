@@ -73,8 +73,6 @@ class GasController extends AbstractController
      */
     public function gasStationIdAction(Station $station)
     {
-//        dump($station);
-//        die;
         return $this->render('gas/gas_station_id.html.twig', [
             'station' => $station,
             'last_prices' => $this->stationUtil->getLastPrices($station),

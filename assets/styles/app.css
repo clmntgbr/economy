@@ -17,6 +17,7 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: Raleway, sans-serif;
+  background-color: #f2f7fc;
 }
 
 #header {
@@ -28,11 +29,18 @@ html, body {
   background-color: rgb(255 255 255);
 }
 
-#header .user {
+#header .dropdown.user {
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+#header .menu.user {
+  top: 55px;
+  right: -11px!important;
+  border-radius: 0;
+  border-top: 0!important;
 }
 
 .body {
@@ -331,6 +339,7 @@ input[name="comment[rating]"] {
   display: inline-block;
   padding: 0 20px 10px 20px;
   border-right: 1px solid #d4d4d5;
+  background-color: white;
 }
 
 #gas_stations #map {
@@ -339,6 +348,14 @@ input[name="comment[rating]"] {
   display: inline-block;
   left: 300px;
   position: absolute;
+}
+
+#gas_stations .gas_stations_limit {
+  position: fixed;
+  top: 80px;
+  right: 10px;
+  z-index: 1111111111;
+  padding-right: 35px;
 }
 
 #gas_stations .ui.form {

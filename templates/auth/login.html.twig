@@ -1,51 +1,105 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_auth.html.twig' %}
 
 {% block title %}Log in!{% endblock %}
 
+{% block stylesheets %}
+
+    <style type="text/css">
+        body > .grid {
+            height: 100%;
+        }
+        .image {
+            margin-top: -100px;
+        }
+        .column {
+            max-width: 450px;
+        }
+
+        .ui.stacked.segment:after, .ui.stacked.segment:before, .ui.stacked.segments:after, .ui.stacked.segments:before {
+            content: none!important;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-    <a href="{{ path('auth_google') }}">
-        Google
-    </a>
+    <div class="ui middle aligned center aligned grid">
 
-
-    <a href="{{ path('auth_facebook') }}">
-        Facebook
-    </a>
-
-
-    <a href="{{ path('auth_linkedin') }}">
-        Linkedin
-    </a>
-
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
-
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
-            </div>
-        {% endif %}
-
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <label for="inputEmail">Email</label>
-        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
-        <label for="inputPassword">Password</label>
-        <input type="password" name="password" id="inputPassword" class="form-control" required>
-
-        <input type="hidden" name="_csrf_token"
-               value="{{ csrf_token('authenticate') }}"
-        >
-
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" name="_remember_me"> Remember me
-            </label>
+        <div class="column">
+            <form class="ui large form login" method="post">
+                <div class="ui stacked segment">
+                    <div class="field">
+                        <a id="google" href="{{ path('auth_google') }}">Google</a>
+                        <a id="facebook" href="{{ path('auth_facebook') }}">Facebook</a>
+                        <a id="linkedin" href="{{ path('auth_linkedin') }}">Linkedin</a>
+                    </div>
+                </div>
+            </form>
+            <form class="ui large form login" method="post">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+                <div class="ui stacked segment">
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="mail icon"></i>
+                            <input type="email" value="{{ last_username }}" name="email" placeholder="Email" id="inputEmail" class="form-control" required autofocus>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" name="password" id="inputPassword" placeholder="Password" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        <input type="checkbox" name="_remember_me"> Remember me
+                    </div>
+                    <div class="ui fluid large teal submit button">Login</div>
+                </div>
+                <div class="ui error message"></div>
+            </form>
         </div>
+    </div>
+{% endblock %}
 
-        <button class="btn btn-lg btn-primary" type="submit">
-            Sign in
-        </button>
-    </form>
+{% block javascripts %}
+    <script>
+        $(document)
+            .ready(function() {
+                $('.ui.form')
+                    .form({
+                        fields: {
+                            email: {
+                                identifier  : 'email',
+                                rules: [
+                                    {
+                                        type   : 'empty',
+                                        prompt : 'Please enter your e-mail'
+                                    },
+                                    {
+                                        type   : 'email',
+                                        prompt : 'Please enter a valid e-mail'
+                                    }
+                                ]
+                            },
+                            password: {
+                                identifier  : 'password',
+                                rules: [
+                                    {
+                                        type   : 'empty',
+                                        prompt : 'Please enter your password'
+                                    },
+                                    {
+                                        type   : 'length[6]',
+                                        prompt : 'Your password must be at least 6 characters'
+                                    }
+                                ]
+                            }
+                        }
+                    })
+                ;
+            })
+        ;
+    </script>
 {% endblock %}
