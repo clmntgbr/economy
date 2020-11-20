@@ -137,7 +137,7 @@ class AuthController extends AbstractController
         //TODO remove this
         $token = $this->getTokenFromSession();
 
-        return $this->render('reset_password/check_email.html.twig', [
+        return $this->render('auth/reset_email.html.twig', [
             'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
             'resetToken' => $token,
         ]);
@@ -158,7 +158,7 @@ class AuthController extends AbstractController
             );
         }
 
-        return $this->render('reset_password/request.html.twig', [
+        return $this->render('auth/reset_password.html.twig', [
             'requestForm' => $form->createView(),
         ]);
     }
@@ -184,7 +184,7 @@ class AuthController extends AbstractController
             /** @var User $user */
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
-            $this->addFlash('reset_password_error', sprintf('There was a problem validating your reset request - %s', $e->getReason()));
+            $this->addFlash('error', sprintf('There was a problem validating your reset request - %s', $e->getReason()));
             return $this->redirectToRoute('auth_reset_password');
         }
 
@@ -208,7 +208,7 @@ class AuthController extends AbstractController
             return $this->redirectToRoute('auth_login');
         }
 
-        return $this->render('reset_password/reset.html.twig', [
+        return $this->render('auth/reset_token.html.twig', [
             'resetForm' => $form->createView(),
         ]);
     }
@@ -230,7 +230,7 @@ class AuthController extends AbstractController
             //TODO remove that session thing
             $this->storeTokenInSession($resetToken->getToken());
         } catch (ResetPasswordExceptionInterface $e) {
-             $this->addFlash('reset_password_error', sprintf(
+             $this->addFlash('error', sprintf(
                  'There was a problem handling your password reset request - %s',
                  $e->getReason()
              ));
@@ -242,7 +242,7 @@ class AuthController extends AbstractController
             ->from(new Address('mailer@economy.com', 'ResetPassword'))
             ->to($user->getEmail())
             ->subject('Your password reset request')
-            ->htmlTemplate('reset_password/email.html.twig')
+            ->htmlTemplate('auth/email.html.twig')
             ->context([
                 'resetToken' => $resetToken,
                 'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
