@@ -27,6 +27,6 @@ class AuthFacebookController extends AbstractController
      */
     public function connectCallbackAction(Request $request, ClientRegistry $clientRegistry)
     {
-        return $this->redirectToRoute('gas_stations');
+        return $this->redirectToRoute('app_gas_stations');
     }
 }

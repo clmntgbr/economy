@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/auth", name="auth_")
+ * @Route("/api/auth", name="api_auth_")
  */
 class AuthController extends AbstractFOSRestController
 {

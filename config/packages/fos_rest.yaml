@@ -8,9 +8,9 @@ fos_rest:
     format_listener:
         enabled: true
         rules:
-          - { path: '^/api', priorities: ['json'], fallback_format: 'json' }
-          - { path: '^/auth/register', priorities: ['json'], fallback_format: 'json' }
-          - { path: '^/auth/authentication', priorities: ['json'], fallback_format: 'json' }
+          - { path: '^/api/v1', priorities: ['json'], fallback_format: 'json' }
+          - { path: '^/api/auth/register', priorities: ['json'], fallback_format: 'json' }
+          - { path: '^/api/auth/authentication', priorities: ['json'], fallback_format: 'json' }
           - { path: '^/auth/login', priorities: ['html'], fallback_format: 'html' }
           - { path: '^/auth/logout', priorities: ['html'], fallback_format: 'html' }
           - { path: '^/', priorities: ['html'], fallback_format: 'html' }

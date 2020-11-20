@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/web/gas")
+ * @Route("/app/gas", name="app_")
  * @IsGranted("ROLE_USER")
  */
 class GasController extends AbstractController

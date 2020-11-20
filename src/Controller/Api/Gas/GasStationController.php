@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/api", name="api_")
+ * @Route("/api/v1", name="api_")
  */
 class GasStationController extends AbstractFOSRestController
 {

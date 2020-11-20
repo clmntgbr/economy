@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * @Route("/api", name="api_")
+ * @Route("/api/v1", name="api_")
  */
 class UserController extends AbstractFOSRestController
 {

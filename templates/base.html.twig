@@ -54,6 +54,12 @@
 <script type="application/javascript" src="{{ asset('asset/semantic/semantic.min.js') }}"></script>
 <script type="application/javascript" src="{{ asset('asset/js/jquery.cookie.js') }}"></script>
 
+<script type="text/javascript">
+    if (window.location.hash && window.location.hash == '#_=_') {
+        window.location.hash = '';
+    }
+</script>
+
 <script>
     $('.ui.user.dropdown').dropdown({
         action: 'select'

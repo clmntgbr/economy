@@ -109,7 +109,7 @@ class AuthFacebookAuthenticator extends SocialAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('gas_stations'));
+        return new RedirectResponse($this->urlGenerator->generate('app_gas_stations'));
     }
 
     public function supportsRememberMe(): bool

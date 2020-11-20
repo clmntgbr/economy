@@ -16,15 +16,15 @@ security:
                 property: email
     firewalls:
         login:
-            pattern: ^/auth/authentication
+            pattern: ^/api/auth/authentication
             stateless: true
             anonymous: true
             json_login:
-                check_path: /auth/authentication_check
+                check_path: /api/auth/authentication_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         api:
-            pattern: ^/api
+            pattern: ^/api/v1
             stateless: true
             anonymous: false
             guard:
@@ -45,8 +45,8 @@ security:
                     - App\Security\Guard\Social\AuthLinkedinAuthenticator
                 entry_point: App\Security\Guard\AuthLoginAuthenticator
             logout:
-                path: app_logout
-                target: app_login
+                path: auth_logout
+                target: auth_login
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
@@ -54,8 +54,9 @@ security:
                 always_remember_me: true
 
     access_control:
-        - { path: ^/auth/authentication, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/auth/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/web, roles: ROLE_USER }
+        - { path: ^/api/auth/authentication, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/auth/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/auth/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/auth/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/app, roles: ROLE_USER }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

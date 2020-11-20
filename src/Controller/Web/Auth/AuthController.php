@@ -8,17 +8,17 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
- * @Route("/auth")
+ * @Route("/auth", name="auth_")
  */
 class AuthController extends AbstractController
 {
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/login", name="login")
      */
     public function loginAction(AuthenticationUtils $authenticationUtils): Response
     {
          if ($this->getUser()) {
-             return $this->redirectToRoute('gas_stations');
+             return $this->redirectToRoute('app_gas_stations');
          }
 
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -28,7 +28,14 @@ class AuthController extends AbstractController
     }
 
     /**
-     * @Route("/logout", name="app_logout")
+     * @Route("/register", name="register")
+     */
+    public function registerAction(): Response
+    {
+    }
+
+    /**
+     * @Route("/logout", name="logout")
      */
     public function logoutAction()
     {

@@ -24,7 +24,7 @@ class AuthLoginAuthenticator extends AbstractFormLoginAuthenticator implements P
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    public const LOGIN_ROUTE = 'auth_login';
 
     /** @var EntityManagerInterface  */
     private $entityManager;
@@ -96,7 +96,7 @@ class AuthLoginAuthenticator extends AbstractFormLoginAuthenticator implements P
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('gas_stations'));
+        return new RedirectResponse($this->urlGenerator->generate('app_gas_stations'));
     }
 
     protected function getLoginUrl()

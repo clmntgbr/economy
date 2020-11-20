@@ -72,7 +72,7 @@
         var gas_stations_limit_cookie = $.cookie('gas_stations_limit_cookie');
         if (gas_stations_limit_cookie === undefined) {
             $.cookie('gas_stations_limit_cookie', uniqid(), { expires: 31, path: '/' });
-            $('#gas_stations').append('<div class="ui positive small message gas_stations_limit"><i class="close icon"></i><div class="header">Dans un soucis de performance, seulement 500 stations peuvent être affichées en même temps.</div><p>Pour trouver la bonne, n\'hésitez pas à déplacer la carte pour la mettre à jour !.</p></div>')
+            $('#app_gas_stations').append('<div class="ui positive small message gas_stations_limit"><i class="close icon"></i><div class="header">Dans un soucis de performance, seulement 500 stations peuvent être affichées en même temps.</div><p>Pour trouver la bonne, n\'hésitez pas à déplacer la carte pour la mettre à jour !.</p></div>')
         }
 
         $('.gas_stations_limit .close').click(function () {
@@ -121,7 +121,7 @@
             gRadius = radius
             filters = {'cities': cities, 'departments': departments};
             $.get({
-                url: '{{ path('ajax_gas_stations_map') }}',
+                url: '{{ path('app_ajax_gas_stations_map') }}',
                 type: 'GET',
                 async: true,
                 data: {'latitude': latitude, 'longitude': longitude, 'radius': radius - (radius/3), 'filters': filters},
@@ -139,14 +139,14 @@
                     $.each(stations, function(index, element) {
                         object[marker + element.id] = L.marker([parseFloat(element.address.latitude), parseFloat(element.address.longitude)], {icon: normal}).addTo(group).on('click', function(e) {
                             $.get({
-                                url: '{{ path('ajax_gas_station_id') }}',
+                                url: '{{ path('app_ajax_gas_station_id') }}',
                                 type: 'GET',
                                 async: true,
                                 data: {'station_id': element.id},
                                 success: function (element, statut) {
                                     $('.gas_station_popup').remove()
                                     var content = "<div class='gas_station_popup'><b class='gas_station_popup_close' onclick='$(\".gas_station_popup\").remove();'></b>" + element['content'] + "</div>"
-                                    $('#gas_stations').append(content)
+                                    $('#app_gas_stations').append(content)
                                     low_prices.forEach(function(element, index, array) {
                                         $('.' + element[0] + '.' + element[2]).css('color', 'green')
                                     })

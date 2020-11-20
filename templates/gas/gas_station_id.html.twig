@@ -176,7 +176,7 @@
             action: 'activate',
             onChange: function (value) {
                 $.get({
-                    url: '{{ path('ajax_gas_prices_year') }}',
+                    url: '{{ path('app_ajax_gas_prices_year') }}',
                     type: 'GET',
                     async: true,
                     data: {'year': value, 'station_id': '{{ station.id }}'},
@@ -281,7 +281,7 @@
         }
 
         $.get({
-            url: '{{ path('ajax_gas_prices_year') }}',
+            url: '{{ path('app_ajax_gas_prices_year') }}',
             type: 'GET',
             async: true,
             data: {'year': 'LAST_SIX_MONTH', 'station_id': '{{ station.id }}'},
