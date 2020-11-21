@@ -7,6 +7,13 @@
 {% endblock %}
 
 {% block body %}
+    {{ form_start(resetForm) }}
+        <h1>Reset your Password</h1>
+        {{ form_errors(resetForm) }}
+        {{ form_widget(resetForm.plainPassword.first, { 'attr': { 'placeholder': "New Password"} }) }}
+        {{ form_widget(resetForm.plainPassword.second, { 'attr': { 'placeholder': "Repeat Password"} }) }}
+        <input type="submit">
+    {{ form_end(resetForm) }}
 {% endblock %}
 
 {% block javascripts %}

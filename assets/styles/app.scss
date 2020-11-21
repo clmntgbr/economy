@@ -22,7 +22,6 @@ html, body {
 
 .body {
   top: 70px;
-  height: calc(100% - 70px);
 }
 
 .row {
@@ -30,7 +29,7 @@ html, body {
 }
 
 .ui.small.message.base {
-  z-index: 1111;
+  z-index: 111111111;
   position: fixed;
   top: 20px;
   left: 50%;
@@ -127,6 +126,15 @@ html, body {
   .ui.form {
     margin-top: 20px;
   }
+}
+
+#app_user_account {
+  position: relative;
+  top: 85px;
+  left: 15px;
+  right: 15px;
+  width: calc(100% - 30px);
+  min-height: calc(100% - 100px);
 }
 
 #app_gas_station_id {

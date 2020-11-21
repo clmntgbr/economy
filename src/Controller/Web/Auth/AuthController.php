@@ -167,7 +167,7 @@ class AuthController extends AbstractController
     /**
      * @Route("/reset/token/{token}", name="reset_token")
      */
-    public function resetPasswordTokenAction(Request $request, UserPasswordEncoderInterface $passwordEncoder, string $token = null): Response
+    public function resetPasswordTokenAction(Request $request, string $token = null): Response
     {
         if ($token) {
             $this->storeTokenInSession($token);
@@ -195,13 +195,13 @@ class AuthController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->resetPasswordHelper->removeResetRequest($token);
 
-            $encodedPassword = $passwordEncoder->encodePassword(
+            $encodedPassword = $this->passwordEncoder->encodePassword(
                 $user,
                 $form->get('plainPassword')->getData()
             );
 
             $user->setPassword($encodedPassword);
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             $this->cleanSessionAfterReset();
 

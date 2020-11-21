@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
 
 class ChangePasswordFormType extends AbstractType
 {
@@ -19,14 +20,13 @@ class ChangePasswordFormType extends AbstractType
                 'type' => PasswordType::class,
                 'first_options' => [
                     'constraints' => [
-                        new NotBlank([
-                            'message' => 'Please enter a password',
-                        ]),
+                        new NotBlank([]),
                         new Length([
                             'min' => 6,
                             'minMessage' => 'Your password should be at least {{ limit }} characters',
                             'max' => 4096,
                         ]),
+                        new NotCompromisedPassword([])
                     ],
                     'label' => 'New password',
                 ],
@@ -34,8 +34,6 @@ class ChangePasswordFormType extends AbstractType
                     'label' => 'Repeat Password',
                 ],
                 'invalid_message' => 'The password fields must match.',
-                // Instead of being set onto the object directly,
-                // this is read and encoded in the controller
                 'mapped' => false,
             ])
         ;
