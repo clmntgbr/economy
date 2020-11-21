@@ -43,31 +43,42 @@ class UserController extends AbstractController
      */
     public function getUserAccountAction(Request $request)
     {
-        $user = $this->getUser();
+        return $this->render('user/user_account.html.twig', []);
+    }
 
+    /**
+     * @Route("/account/reset/password", name="user_account_reset_password")
+     */
+    public function getUserAccountResetPasswordAction(Request $request)
+    {
         $resetForm = $this->createForm(ChangePasswordFormType::class);
+
         $resetForm->handleRequest($request);
 
         if ($resetForm->isSubmitted() && $resetForm->isValid()) {
+            $user = $this->getUser();
             $encodedPassword = $this->passwordEncoder->encodePassword(
                 $user,
                 $resetForm->get('plainPassword')->getData()
             );
+
             $user->setPassword($encodedPassword);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
+
             $this->addFlash('success', 'Your Password have been changed.');
+            return $this->redirectToRoute('app_user_account');
         }
 
         if ($resetForm->isSubmitted() && !$resetForm->isValid()) {
-            $message = '';
+            $message = null;
             foreach ($resetForm->getErrors(true) as $error) {
                 $message .= sprintf("%s<br>", $error->getMessage());
             }
             $this->addFlash('error', $message);
         }
 
-        return $this->render('user/user_account.html.twig', [
+        return $this->render('user/user_account_reset_password.html.twig', [
             'resetForm' => $resetForm->createView(),
         ]);
     }

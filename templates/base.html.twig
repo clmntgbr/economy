@@ -6,8 +6,7 @@
     <title>{% block title %}Economy - {% endblock %}</title>
 
     <link rel="stylesheet" type="text/css" href="{{ asset('asset/semantic/semantic.min.css') }}"/>
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
 
     <script async defer src="https://kit.fontawesome.com/cd91c1afff.js"></script>
 
@@ -33,6 +32,16 @@
 {% endif %}
 
 <header id="header">
+    <div class="ui labeled icon menu">
+        <a class="item" href="{{ path('app_gas_stations') }}">
+            <i class="fas fa-map-marked-alt"></i>
+            <p>Gas Stations</p>
+        </a>
+        <a class="item" href="{{ path('app_gas_stations_list') }}">
+            <i class="fas fa-gas-pump"></i>
+            <p>Gas Stations List</p>
+        </a>
+    </div>
     <div class="ui horizontal list user dropdown">
         <div class="item">
             <img class="ui mini circular image" src="{{ avatar }}">
@@ -45,6 +54,9 @@
         <div class="menu user">
             <a class="item" href="{{ path('app_user_account') }}">
                 Mon Compte
+            </a>
+            <a class="item" href="{{ path('app_user_account_reset_password') }}">
+                Changer mon Mot de Passe
             </a>
         </div>
     </div>

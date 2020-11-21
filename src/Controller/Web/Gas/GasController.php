@@ -68,6 +68,14 @@ class GasController extends AbstractController
     }
 
     /**
+     * @Route("/stations/list", name="gas_stations_list")
+     */
+    public function gasStationsListAction(Request $request)
+    {
+        return $this->render('gas/gas_stations_list.html.twig', []);
+    }
+
+    /**
      * @Route("/station/{id}", name="gas_station_id")
      * @ParamConverter("station", class="App\Entity\Gas\Station", options={"mapping": {"id": "id"}})
      */
