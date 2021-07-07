@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="ui form" id="reset">
-                    <button class="ui google plus button">Reset</button>
+                    <button class="ui google plus button">Réinitialiser</button>
                 </div>
             </div>
         </div>
@@ -69,10 +69,10 @@
 {% block javascripts %}
     <script type="application/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
     <script  type="application/javascript">
-        var gas_stations_limit_cookie = $.cookie('gas_stations_limit_cookie');
+        var gas_stations_limit_cookie = $.cookie('GASSTATIONLIMITCOOKIE');
         if (gas_stations_limit_cookie === undefined) {
-            $.cookie('gas_stations_limit_cookie', uniqid(), { expires: 31, path: '/' });
-            $('#app_gas_stations').append('<div class="ui positive small message gas_stations_limit"><i class="close icon"></i><div class="header">Dans un soucis de performance, seulement 500 stations peuvent être affichées en même temps.</div><p>Pour trouver la bonne, n\'hésitez pas à déplacer la carte pour la mettre à jour !.</p></div>')
+            $.cookie('GASSTATIONLIMITCOOKIE', uniqid(), { expires: 31, path: '/' });
+            $('#app_gas_stations').append('<div class="ui positive small message gas_stations_limit"><i class="close icon"></i><div class="header">Dans un soucis de performance, seulement 500 stations peuvent être affichées en même temps.</div><p>Pour trouver la bonne station, n\'hésitez pas à déplacer la carte pour la mettre à jour !.</p></div>')
         }
 
         $('.gas_stations_limit .close').click(function () {
@@ -163,8 +163,7 @@
         }
 
         map.on('locationfound', function (e) {
-            var radius = e.accuracy
-            L.circle(e.latlng, radius).addTo(map)
+            L.circle(e.latlng, 750).addTo(map)
             var marker = L.marker(e.latlng).addTo(map)
             marker.on('click', function(e) {
                 map.setView([parseFloat(e.latlng.lat), parseFloat(e.latlng.lng)])

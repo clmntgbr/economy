@@ -35,11 +35,15 @@
     <div class="ui labeled icon menu">
         <a class="item" href="{{ path('app_gas_stations') }}">
             <i class="fas fa-map-marked-alt"></i>
-            <p>Gas Stations</p>
+            <p>Stations Essences</p>
         </a>
         <a class="item" href="{{ path('app_gas_stations_list') }}">
             <i class="fas fa-gas-pump"></i>
-            <p>Gas Stations List</p>
+            <p>Liste des Stations Essences</p>
+        </a>
+        <a class="item" href="{{ path('app_gas_stations_list') }}">
+            <i class="fas fa-bookmark"></i>
+            <p>Mes préférées</p>
         </a>
     </div>
     <div class="ui horizontal list user dropdown">
@@ -75,7 +79,7 @@
 <script type="application/javascript" src="{{ asset('asset/js/jquery.cookie.js') }}"></script>
 
 <script type="text/javascript">
-    if (window.location.hash && window.location.hash == '#_=_') {
+    if (window.location.hash && window.location.hash === '#_=_') {
         window.location.hash = '';
     }
 

@@ -118,6 +118,7 @@ class Address
         $this->street = $street;
         $this->city = $city;
         $this->country = $country;
+        $this->vicinity = sprintf("%s, %s %s", $street, $city, $postalCode);
     }
 
     public function updateLongitude($longitude): self

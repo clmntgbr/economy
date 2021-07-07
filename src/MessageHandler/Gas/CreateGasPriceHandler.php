@@ -66,19 +66,19 @@ class CreateGasPriceHandler implements MessageHandlerInterface
         $prices = $station->getLastPrices();
 
         if (count($prices) <= 0) {
-            $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate()];
+            $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate(), 'type' => $message->getTypeId(), 'value' => $message->getValue()];
             $station->setLastPrices($prices);
             return;
         }
 
         foreach ($prices as $key => $value) {
             if (isset($prices[$message->getTypeId()]) && ($prices[$message->getTypeId()]['date'] < $message->getDate())) {
-                $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate()];
+                $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate(), 'type' => $message->getTypeId(), 'value' => $message->getValue()];
                 continue;
             }
 
             if (!isset($prices[$message->getTypeId()])) {
-                $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate()];
+                $prices[$message->getTypeId()] = ['id' => $price->getId(), 'date' => $message->getDate(), 'type' => $message->getTypeId(), 'value' => $message->getValue()];
                 continue;
             }
         }

@@ -225,6 +225,7 @@ class Station
         $this->id = $id;
         $this->pop = $pop;
         $this->element = $element;
+        $this->name = sprintf("%s, %s", $street, $city);
         $this->address = new Address($postalCode, $longitude, $latitude, $street, $city, $country);
         $this->googlePlace = new Place();
 

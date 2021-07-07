@@ -24,13 +24,13 @@
                     {% if last_prices[type.id] is defined %}
                         {% set price = last_prices[type.id] %}
                         <div class="item {{ type.slug }} {{ price.color }}">
-                            <a href="{{ path('gas_type_id', {'slug' : type.slug}) }}" class="name">{{ type.name }}</a>
+                            <a href="{{ path('app_gas_type_id', {'slug' : type.slug}) }}" class="name">{{ type.name }}</a>
                             <p class="price">{{ price.value }}</p>
                             <p class="date">Dernière MAJ le {{ price.date|date('d/m/Y') }}</p>
                         </div>
                     {% else %}
                         <div class="item {{ type.slug }}">
-                            <a href="{{ path('gas_type_id', {'slug' : type.slug}) }}" class="name">{{ type.name }}</a>
+                            <a href="{{ path('app_gas_type_id', {'slug' : type.slug}) }}" class="name">{{ type.name }}</a>
                             <p class="price small">NaN</p>
                             <p class="date">Pas de MAJ</p>
                         </div>
@@ -44,7 +44,28 @@
         <div id="map" class="gas_station"></div>
     </section>
 
-    <section class="prices container">
+    {% if station.googlePlace.openingHours is not null %}
+        <section class="gas_station_horaires container">
+            <h3 class="background"><span>Horaires</span></h3>
+            {% for openingHour in station.googlePlace.openingHours %}
+                <div class="horaires col-sm-3 col-4">{{ openingHour }}</div>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    {% if station.services.count > 0 %}
+        <section class="gas_station_services container">
+            <h3 class="background"><span>Services et prestations</span></h3>
+            <div class="row">
+                {% for service in station.services %}
+                    <div class="services col-sm-3 col-4">{{ service.name }}</div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="gas_station_prices container">
+        <h3 class="background"><span>Prix des carburants</span></h3>
         <div class="row gas_prices">
             <div class="ui form" id="gas_year">
                 <div class="field">
@@ -68,14 +89,9 @@
         </div>
     </section>
 
-{#    <section class="gas_station_opening">#}
-{#        {% for openingHour in station.googlePlace.openingHours %}#}
-{#            <p>{{ openingHour }}</p>#}
-{#        {% endfor %}#}
-{#    </section>#}
-
 
     <section class="gas_station_comment">
+        <h3 class="background"><span>Avis / Commentaires</span></h3>
         <div style="margin-top: 20px;text-align: center;">{{ google_rating|raw }}</div>
         <div class="ui comments">
             {% set hasCommented = false %}
@@ -98,7 +114,7 @@
                         {% if app.user and review.createdBy and app.user.id == review.createdBy.id %}
                             {% set hasCommented = true %}
                             <div class="actions">
-                                <a class="delete" href="{{ path('gas_station_id_remove_comment', {'id': review.id}) }}">Supprimer</a>
+                                <a class="delete" href="{{ path('app_gas_station_id_remove_comment', {'id': review.id}) }}">Supprimer</a>
                             </div>
                         {% endif %}
                     </div>
@@ -107,7 +123,7 @@
             {% endfor %}
 
             {% if hasCommented == false %}
-                <form class="ui reply form" action="{{ path('gas_station_id_comment', {'id': station.id}) }}" method="post">
+                <form class="ui reply form" action="{{ path('app_gas_station_id_comment', {'id': station.id}) }}" method="post">
                     <div class="ui large star rating"></div>
                     <input name="comment[rating]" value="2"/>
                     <div class="field">
@@ -157,8 +173,7 @@
         map.locate({setView: true, maxZoom: 13})
 
         map.on('locationfound', function (e) {
-            var radius = e.accuracy;
-            L.circle(e.latlng, radius).addTo(map)
+            L.circle(e.latlng, 750).addTo(map)
             L.marker(e.latlng).addTo(map)
             L.marker([parseFloat({{ station.address.latitude }}), parseFloat({{ station.address.longitude }})], {icon: normal}).addTo(group)
             map.setView([parseFloat({{ station.address.latitude }}), parseFloat({{ station.address.longitude }})])

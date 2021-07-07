@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * @Route("/app", name="app_")
+ * @Route("/app", name="app_ajax_")
  * @IsGranted("ROLE_USER")
  */
 class AjaxController extends AbstractController
@@ -56,7 +56,7 @@ class AjaxController extends AbstractController
     }
 
     /**
-     * @Route("/ajax/gas_stations/map", name="ajax_gas_stations_map", methods={"GET"})
+     * @Route("/ajax/gas_stations/map", name="gas_stations_map", methods={"GET"})
      */
     public function ajaxGasStationsMapAction(Request $request)
     {
@@ -77,7 +77,7 @@ class AjaxController extends AbstractController
     }
 
     /**
-     * @Route("/ajax/gas_station/id", name="ajax_gas_station_id", methods={"GET"})
+     * @Route("/ajax/gas_station/id", name="gas_station_id", methods={"GET"})
      */
     public function ajaxGasStationIdAction(Request $request)
     {
@@ -101,7 +101,15 @@ class AjaxController extends AbstractController
     }
 
     /**
-     * @Route("/ajax/gas_prices", name="ajax_gas_prices_year", methods={"GET"})
+     * @Route("/ajax/gas/stations/list", name="gas_stations_list")
+     */
+    public function ajaxGasStationsListAction(Request $request)
+    {
+        return new JsonResponse(['data' => $this->stationRepository->findGasStationsList()], 200);
+    }
+
+    /**
+     * @Route("/ajax/gas_prices", name="gas_prices_year", methods={"GET"})
      */
     public function ajaxGasSPricesByYearAction(Request $request)
     {

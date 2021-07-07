@@ -30,14 +30,25 @@ class StationRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findGasStationsList()
+    {
+        $query = 'SELECT p.id, p.name, g.url as google_url, p.last_prices
+                  FROM gas_station p    
+                  INNER JOIN google_place g ON g.id = p.google_place_id      
+                  WHERE p.is_closed;';
+
+        $statement = $this->getEntityManager()->getConnection()->prepare($query);
+        $statement->execute();
+        return $statement->fetchAllAssociative();
+    }
+
     public function findGasStationByIdForGooglePlace()
     {
         $query = 'SELECT p.id, p.is_closed, p.is_forced, p.is_googled, p.is_formatted, g.place_id, a.longitude, a.latitude, a.street, a.city
-                  FROM gas_station p 
+                  FROM gas_station p
                   INNER JOIN google_place g ON g.id = p.google_place_id
-                  INNER JOIN address a ON a.id = p.address_id                  
+                  INNER JOIN address a ON a.id = p.address_id
                   WHERE (p.is_closed IS FALSE OR p.is_forced IS TRUE) AND (p.is_googled IS FALSE OR p.is_forced IS TRUE) AND (p.is_formatted IS FALSE OR p.is_forced IS TRUE)  AND a.longitude IS NOT NULL AND a.latitude IS NOT NULL;';
-
 
         $statement = $this->getEntityManager()->getConnection()->prepare($query);
         $statement->execute();

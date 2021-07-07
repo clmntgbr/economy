@@ -8,11 +8,13 @@ use App\Entity\Review;
 use App\Entity\User\User;
 use App\Repository\AddressRepository;
 use App\Repository\Gas\ServiceRepository;
+use App\Repository\Gas\StationRepository;
 use App\Repository\Gas\TypeRepository;
 use App\Util\DotEnv;
 use App\Util\Gas\StationUtil;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,18 +39,26 @@ class GasController extends AbstractController
     /** @var AddressRepository */
     private $addressRepository;
 
+    /** @var StationRepository */
+    private $stationRepository;
+
+    /** @var SerializerInterface */
+    private $serializer;
+
     /** @var StationUtil */
     private $stationUtil;
 
     /** @var DotEnv */
     private $dotEnv;
 
-    public function __construct(ServiceRepository $serviceRepository, EntityManagerInterface $entityManager, AddressRepository $addressRepository, TypeRepository $typeRepository, StationUtil $stationUtil, DotEnv $dotEnv)
+    public function __construct(SerializerInterface $serializer, StationRepository $stationRepository, ServiceRepository $serviceRepository, EntityManagerInterface $entityManager, AddressRepository $addressRepository, TypeRepository $typeRepository, StationUtil $stationUtil, DotEnv $dotEnv)
     {
         $this->entityManager = $entityManager;
         $this->typeRepository = $typeRepository;
         $this->addressRepository = $addressRepository;
         $this->serviceRepository = $serviceRepository;
+        $this->stationRepository = $stationRepository;
+        $this->serializer = $serializer;
         $this->stationUtil = $stationUtil;
         $this->dotEnv = $dotEnv;
     }
@@ -68,7 +78,16 @@ class GasController extends AbstractController
     }
 
     /**
+     * @Route("/stations/favorite", name="gas_stations_favorite")
+     */
+    public function gasStationsFavoriteAction(Request $request)
+    {
+        return $this->render('gas/gas_stations_favorite.html.twig', []);
+    }
+
+    /**
      * @Route("/stations/list", name="gas_stations_list")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function gasStationsListAction(Request $request)
     {
